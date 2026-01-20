@@ -1,4 +1,4 @@
-const CACHE_NAME = 'liga-cache-v1';
+const CACHE_NAME = 'liga-cache-v2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -6,7 +6,9 @@ const urlsToCache = [
   '/styles.css',
   '/script.js',
   '/admin.js',
-  '/manifest.json'
+  '/manifest.json',
+  '/icon-192.png',
+  '/icon-512.png'
 ];
 
 self.addEventListener('install', event => {
