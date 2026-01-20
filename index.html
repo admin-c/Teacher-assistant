@@ -6,6 +6,7 @@
     <title>Лъилибская Лига</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body>
     <div class="background-container">
@@ -14,9 +15,9 @@
     </div>
 
     <nav class="navbar">
-        <a href="#" class="nav-btn" data-page="home">Главная</a>
+        <a href="#" class="nav-btn active" data-page="home">Главная</a>
         <a href="#" class="nav-btn" data-page="news">Новости</a>
-        <a href="#" class="nav-btn" data-page="schedule">Расписание</a>
+        <a href="#" class="nav-btn" data-page="schedule">Матчи</a>
         <a href="#" class="nav-btn" data-page="results">Результаты</a>
         <a href="#" class="nav-btn" data-page="table">Таблица</a>
         <a href="#" class="nav-btn" data-page="teams">Команды</a>
@@ -25,70 +26,80 @@
     <div class="content">
         <!-- Главная страница -->
         <section id="home" class="section active">
-            <h1 class="league-title animate-in">Лъилибская Лига</h1>
+            <div class="hero-section">
+                <h1 class="league-title animate-in">Лъилибская Лига</h1>
+                <p class="subtitle">Чемпионат по мобильному футболу FC Mobile</p>
+            </div>
             
-            <form id="registration-form" class="registration-form animate-in-delay">
-                <input type="text" id="team-name" placeholder="Название команды" required>
-                <input type="text" id="owner-name" placeholder="Владелец команды" required>
-                <button type="submit">Записаться на чемпионат</button>
-            </form>
-            
-            <div id="status-message" class="status-message hidden">Вы записаны!</div>
+            <div class="registration-card">
+                <h3>Записаться на чемпионат</h3>
+                <form id="registration-form">
+                    <input type="text" id="team-name" placeholder="Название команды" required>
+                    <input type="text" id="owner-name" placeholder="Владелец команды" required>
+                    <button type="submit">Записаться</button>
+                </form>
+                <div id="status-message" class="status-message hidden">Вы записаны!</div>
+            </div>
         </section>
 
         <!-- Новости -->
-        <section id="news" class="section hidden">
+        <section id="news" class="section">
             <h2>Новости</h2>
-            <div id="news-container" class="news-container">
+            <div id="news-container" class="cards-grid">
                 <!-- Новости будут загружены -->
             </div>
         </section>
 
-        <!-- Расписание матчей -->
-        <section id="schedule" class="section hidden">
-            <h2>Расписание матчей</h2>
-            <div id="schedule-container" class="schedule-container">
+        <!-- Матчи -->
+        <section id="schedule" class="section">
+            <h2>Предстоящие матчи</h2>
+            <div id="schedule-container" class="cards-grid">
                 <!-- Матчи будут загружены -->
             </div>
         </section>
 
-        <!-- Результаты тура -->
-        <section id="results" class="section hidden">
+        <!-- Результаты -->
+        <section id="results" class="section">
             <h2>Результаты тура</h2>
-            <div id="results-container" class="results-container">
+            <div id="results-container" class="cards-grid">
                 <!-- Результаты будут загружены -->
             </div>
         </section>
 
-        <!-- Турнирная таблица -->
-        <section id="table" class="section hidden">
+        <!-- Таблица -->
+        <section id="table" class="section">
             <h2>Турнирная таблица</h2>
-            <table id="tournament-table" class="tournament-table">
-                <thead>
-                    <tr>
-                        <th>Место</th>
-                        <th>Команда</th>
-                        <th>Игр</th>
-                        <th>Побед</th>
-                        <th>Ничья</th>
-                        <th>Поражений</th>
-                        <th>Очки</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Данные будут загружены -->
-                </tbody>
-            </table>
+            <div class="table-container">
+                <table id="tournament-table" class="tournament-table">
+                    <thead>
+                        <tr>
+                            <th>Место</th>
+                            <th>Команда</th>
+                            <th>И</th>
+                            <th>Поб</th>
+                            <th>Нич</th>
+                            <th>Пор</th>
+                            <th>Очки</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Данные будут загружены -->
+                    </tbody>
+                </table>
+            </div>
         </section>
 
         <!-- Команды -->
-        <section id="teams" class="section hidden">
+        <section id="teams" class="section">
             <h2>Участники</h2>
-            <div id="teams-container" class="teams-container">
+            <div id="teams-container" class="cards-grid">
                 <!-- Команды будут загружены -->
             </div>
         </section>
     </div>
+
+    <!-- Кнопка "Установить" -->
+    <button id="install-button" class="install-btn hidden">Установить на телефон</button>
 
     <script src="script.js"></script>
     <script>
@@ -115,8 +126,8 @@
             ctx.fillStyle = '#2E8B57';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = 3;
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 2;
             ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
             
             ctx.beginPath();
