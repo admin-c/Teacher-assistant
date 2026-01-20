@@ -29,7 +29,6 @@ function initSPA() {
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
-            const pageId = link.getAttribute('data-page');
             
             // Убираем активный класс с текущей кнопки
             document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -39,22 +38,23 @@ function initSPA() {
             // Добавляем активный класс к нажатой кнопке
             link.classList.add('active');
             
-            // Сохраняем текущую страницу перед переключением
-            const oldPage = currentPage;
+            const pageId = link.getAttribute('data-page');
             switchPage(pageId);
             
-            // Загружаем данные для новой страницы только при переходе
-            if (pageId === 'news') {
-                loadNews();
-            } else if (pageId === 'schedule') {
-                loadSchedule();
-            } else if (pageId === 'results') {
-                loadResults();
-            } else if (pageId === 'table') {
-                loadTable();
-            } else if (pageId === 'teams') {
-                loadTeams();
-            }
+            // Загружаем данные для новой страницы
+            setTimeout(() => {
+                if (pageId === 'news') {
+                    loadNews();
+                } else if (pageId === 'schedule') {
+                    loadSchedule();
+                } else if (pageId === 'results') {
+                    loadResults();
+                } else if (pageId === 'table') {
+                    loadTable();
+                } else if (pageId === 'teams') {
+                    loadTeams();
+                }
+            }, 100);
         });
     });
 }
@@ -91,19 +91,19 @@ async function registerTeam(e) {
 
         if (response.ok) {
             document.getElementById('status-message').classList.remove('hidden');
-            document.getElementById('status-message').style.animation = 'pulse 2s infinite';
-            e.target.reset();
             
-            // Через 3 секунды скрываем сообщение
+            // Скрываем сообщение через 4 секунды
             setTimeout(() => {
                 document.getElementById('status-message').classList.add('hidden');
-            }, 3000);
+            }, 4000);
+            
+            e.target.reset();
         } else {
-            alert('Ошибка при регистрации команды');
+            alert('❌ Ошибка при регистрации команды');
         }
     } catch (error) {
         console.error('Ошибка:', error);
-        alert('Произошла ошибка при регистрации');
+        alert('❌ Произошла ошибка при регистрации');
     }
 }
 
@@ -112,20 +112,24 @@ async function loadNews() {
         const response = await fetch(`${API_BASE_URL}/news`);
         const news = await response.json();
 
-        // Проверяем, существует ли элемент на текущей странице
         const container = document.getElementById('news-container');
-        if (!container) return; // Если элемента нет, выходим
+        if (!container) return;
 
         container.innerHTML = '';
 
+        if (news.length === 0) {
+            container.innerHTML = '<div class="card"><p>📰 Новостей пока нет</p></div>';
+            return;
+        }
+
         news.forEach((item, index) => {
             const newsElement = document.createElement('div');
-            newsElement.className = 'card load-in';
+            newsElement.className = 'card';
             newsElement.style.animationDelay = `${index * 0.1}s`;
             newsElement.innerHTML = `
-                <h3>${item.title}</h3>
+                <h3>📢 ${item.title}</h3>
                 <p>${item.content}</p>
-                <small>${new Date(item.date).toLocaleDateString()}</small>
+                <small>📅 ${new Date(item.date).toLocaleDateString('ru-RU')}</small>
             `;
             container.appendChild(newsElement);
         });
@@ -139,19 +143,23 @@ async function loadTeams() {
         const response = await fetch(`${API_BASE_URL}/teams`);
         const teams = await response.json();
 
-        // Проверяем, существует ли элемент на текущей странице
         const container = document.getElementById('teams-container');
         if (!container) return;
 
         container.innerHTML = '';
 
+        if (teams.length === 0) {
+            container.innerHTML = '<div class="card"><p>👥 Команд пока нет</p></div>';
+            return;
+        }
+
         teams.forEach((team, index) => {
             const teamCard = document.createElement('div');
-            teamCard.className = 'card load-in';
+            teamCard.className = 'card';
             teamCard.style.animationDelay = `${index * 0.1}s`;
             teamCard.innerHTML = `
-                <h3>${team.name}</h3>
-                <p>Владелец: ${team.owner}</p>
+                <h3>🏆 ${team.name}</h3>
+                <p>👤 Владелец: ${team.owner}</p>
             `;
             container.appendChild(teamCard);
         });
@@ -165,19 +173,23 @@ async function loadSchedule() {
         const response = await fetch(`${API_BASE_URL}/matches`);
         const matches = await response.json();
 
-        // Проверяем, существует ли элемент на текущей странице
         const container = document.getElementById('schedule-container');
         if (!container) return;
 
         container.innerHTML = '';
 
+        if (matches.length === 0) {
+            container.innerHTML = '<div class="card"><p>⚽ Матчей пока нет</p></div>';
+            return;
+        }
+
         matches.forEach((match, index) => {
             const matchElement = document.createElement('div');
-            matchElement.className = 'card load-in';
+            matchElement.className = 'card';
             matchElement.style.animationDelay = `${index * 0.1}s`;
             matchElement.innerHTML = `
-                <h3>${match.team1} vs ${match.team2}</h3>
-                <p>📅 ${new Date(match.date).toLocaleString()}</p>
+                <h3>⚔️ ${match.team1} vs ${match.team2}</h3>
+                <p>📅 ${new Date(match.date).toLocaleString('ru-RU')}</p>
                 <p>📊 Статус: ${match.status}</p>
                 ${match.score1 !== undefined && match.score2 !== undefined ? 
                     `<p>🏆 Счёт: ${match.score1} - ${match.score2}</p>` : ''}
@@ -194,20 +206,24 @@ async function loadResults() {
         const response = await fetch(`${API_BASE_URL}/results`);
         const results = await response.json();
 
-        // Проверяем, существует ли элемент на текущей странице
         const container = document.getElementById('results-container');
         if (!container) return;
 
         container.innerHTML = '';
 
+        if (results.length === 0) {
+            container.innerHTML = '<div class="card"><p>📊 Результатов пока нет</p></div>';
+            return;
+        }
+
         results.forEach((result, index) => {
             const resultElement = document.createElement('div');
-            resultElement.className = 'card load-in';
+            resultElement.className = 'card';
             resultElement.style.animationDelay = `${index * 0.1}s`;
             resultElement.innerHTML = `
-                <h3>${result.team1} ${result.score1} - ${result.score2} ${result.team2}</h3>
+                <h3>🏆 ${result.team1} ${result.score1} - ${result.score2} ${result.team2}</h3>
                 <p> Тур: ${result.round}</p>
-                <p>📅 ${new Date(result.date).toLocaleDateString()}</p>
+                <p>📅 ${new Date(result.date).toLocaleDateString('ru-RU')}</p>
             `;
             container.appendChild(resultElement);
         });
@@ -221,15 +237,18 @@ async function loadTable() {
         const response = await fetch(`${API_BASE_URL}/table`);
         const tableData = await response.json();
 
-        // Проверяем, существует ли элемент на текущей странице
         const tbody = document.querySelector('#tournament-table tbody');
         if (!tbody) return;
 
         tbody.innerHTML = '';
 
+        if (tableData.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7">📈 Команд пока нет</td></tr>';
+            return;
+        }
+
         tableData.forEach((team, index) => {
             const row = document.createElement('tr');
-            row.className = 'load-in';
             row.style.animationDelay = `${index * 0.05}s`;
             row.innerHTML = `
                 <td>${index + 1}</td>
@@ -249,13 +268,10 @@ async function loadTable() {
 
 // Инициализация PWA
 function initPWA() {
-    // Проверяем возможность установки
     window.addEventListener('beforeinstallprompt', (e) => {
-        // Предотвращаем стандартный поп-ап
         e.preventDefault();
-        // Сохраняем событие для дальнейшего использования
         deferredPrompt = e;
-        // Показываем кнопку установки
+        
         const installButton = document.getElementById('install-button');
         if (installButton) {
             installButton.classList.remove('hidden');
@@ -263,9 +279,8 @@ function initPWA() {
         }
     });
     
-    // Проверяем, уже ли установлено приложение
     window.addEventListener('appinstalled', () => {
-        console.log('PWA was installed');
+        console.log('✅ PWA была установлена');
         const installButton = document.getElementById('install-button');
         if (installButton) {
             installButton.classList.add('hidden');
@@ -275,14 +290,12 @@ function initPWA() {
 
 function showInstallPromotion() {
     if (deferredPrompt) {
-        // Показываем нативный поп-ап установки
         deferredPrompt.prompt();
-        // Ждем ответа пользователя
         deferredPrompt.userChoice.then((choiceResult) => {
             if (choiceResult.outcome === 'accepted') {
-                console.log('User accepted the install prompt');
+                console.log('✅ Пользователь принял установку');
             } else {
-                console.log('User dismissed the install prompt');
+                console.log('❌ Пользователь отклонил установку');
             }
             deferredPrompt = null;
         });
@@ -293,7 +306,7 @@ function showInstallPromotion() {
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
-            .then(registration => console.log('SW registered'))
-            .catch(error => console.log('SW registration failed'));
+            .then(registration => console.log('✅ SW зарегистрирован'))
+            .catch(error => console.log('❌ Ошибка регистрации SW:', error));
     });
 }
