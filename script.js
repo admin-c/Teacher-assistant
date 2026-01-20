@@ -1,18 +1,25 @@
 // API конфигурация
-const API_BASE_URL = 'https://champion-league.onrender.com/api'; // Замените на ваш API URL
+const API_BASE_URL = 'https://champion-league.onrender.com/api';
 
-// Проверка регистрации пользователя
 document.addEventListener('DOMContentLoaded', () => {
+    // Проверяем наличие формы регистрации на странице
     const form = document.getElementById('registration-form');
     if (form) {
         form.addEventListener('submit', registerTeam);
     }
-    
-    loadNews();
-    loadSchedule();
-    loadTable();
-    
-    // Анимация появления контента
+
+    // Загружаем данные только если они нужны на странице
+    if (document.getElementById('news-container')) {
+        loadNews();
+    }
+    if (document.getElementById('schedule-container')) {
+        loadSchedule();
+    }
+    if (document.querySelector('#tournament-table tbody')) {
+        loadTable();
+    }
+
+    // Анимация появления
     animateElements();
 });
 
@@ -25,10 +32,10 @@ function animateElements() {
 
 async function registerTeam(e) {
     e.preventDefault();
-    
+
     const teamName = document.getElementById('team-name').value;
     const ownerName = document.getElementById('owner-name').value;
-    
+
     try {
         const response = await fetch(`${API_BASE_URL}/register-team`, {
             method: 'POST',
@@ -37,16 +44,11 @@ async function registerTeam(e) {
             },
             body: JSON.stringify({ teamName, ownerName })
         });
-        
+
         if (response.ok) {
             document.getElementById('status-message').classList.remove('hidden');
             document.getElementById('status-message').style.animation = 'pulse 2s infinite';
-            form.reset();
-            
-            // Добавляем анимацию для сообщения
-            setTimeout(() => {
-                document.getElementById('status-message').style.animation = '';
-            }, 2000);
+            e.target.reset(); // Используем e.target вместо form
         } else {
             alert('Ошибка при регистрации команды');
         }
@@ -60,10 +62,12 @@ async function loadNews() {
     try {
         const response = await fetch(`${API_BASE_URL}/news`);
         const news = await response.json();
-        
+
         const container = document.getElementById('news-container');
+        if (!container) return; // Защита от null
+
         container.innerHTML = '';
-        
+
         news.forEach((item, index) => {
             const newsElement = document.createElement('div');
             newsElement.className = 'news-item load-in';
@@ -84,10 +88,12 @@ async function loadSchedule() {
     try {
         const response = await fetch(`${API_BASE_URL}/matches`);
         const matches = await response.json();
-        
+
         const container = document.getElementById('schedule-container');
+        if (!container) return; // Защита от null
+
         container.innerHTML = '';
-        
+
         matches.forEach((match, index) => {
             const matchElement = document.createElement('div');
             matchElement.className = 'match-item load-in';
@@ -108,10 +114,12 @@ async function loadTable() {
     try {
         const response = await fetch(`${API_BASE_URL}/table`);
         const tableData = await response.json();
-        
+
         const tbody = document.querySelector('#tournament-table tbody');
+        if (!tbody) return; // Защита от null
+
         tbody.innerHTML = '';
-        
+
         tableData.forEach((team, index) => {
             const row = document.createElement('tr');
             row.className = 'load-in';
@@ -139,5 +147,4 @@ if ('serviceWorker' in navigator) {
             .then(registration => console.log('SW registered'))
             .catch(error => console.log('SW registration failed'));
     });
-
 }
