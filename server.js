@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
-// In-memory storage (замените на базу данных в продакшене)
+// In-memory storage
 let teams = [];
 let pendingRegistrations = [];
 let news = [];
@@ -49,7 +49,6 @@ app.post('/api/approve-registration/:id', (req, res) => {
             owner: registration.ownerName
         });
         
-        // Добавляем команду в таблицу
         table.push({
             id: registration.id,
             name: registration.teamName,
@@ -92,7 +91,6 @@ app.put('/api/teams/:id', (req, res) => {
         teams[teamIndex].name = name;
         teams[teamIndex].owner = owner;
         
-        // Обновляем имя в таблице
         const tableIndex = table.findIndex(t => t.id === id);
         if (tableIndex !== -1) {
             table[tableIndex].name = name;
@@ -110,14 +108,11 @@ app.delete('/api/teams/:id', (req, res) => {
     
     if (teamIndex !== -1) {
         teams.splice(teamIndex, 1);
-        
-        // Удаляем из таблицы
         const tableIndex = table.findIndex(t => t.id === id);
         if (tableIndex !== -1) {
             table.splice(tableIndex, 1);
         }
         
-        // Удаляем из матчей и результатов
         matches = matches.filter(m => m.team1Id !== id && m.team2Id !== id);
         results = results.filter(r => r.team1Id !== id && r.team2Id !== id);
         
@@ -168,7 +163,6 @@ app.put('/api/matches/:id/score', (req, res) => {
         matches[matchIndex].score2 = score2;
         matches[matchIndex].status = 'Завершён';
         
-        // Добавляем результат
         results.push({
             id: Date.now().toString(),
             team1: matches[matchIndex].team1,
@@ -179,7 +173,6 @@ app.put('/api/matches/:id/score', (req, res) => {
             date: new Date().toISOString()
         });
         
-        // Обновляем таблицу
         updateTableFromResults();
         
         res.json({ message: 'Счёт обновлён' });
@@ -201,7 +194,6 @@ app.put('/api/results/:id', (req, res) => {
         results[resultIndex].score1 = score1;
         results[resultIndex].score2 = score2;
         
-        // Обновляем соответствующий матч
         const match = matches.find(m => m.team1 === results[resultIndex].team1 && m.team2 === results[resultIndex].team2);
         if (match) {
             match.score1 = score1;
@@ -223,7 +215,6 @@ app.delete('/api/results/:id', (req, res) => {
     if (resultIndex !== -1) {
         results.splice(resultIndex, 1);
         
-        // Обновляем соответствующий матч
         const matchIndex = matches.findIndex(m => 
             m.team1 === results[resultIndex].team1 && 
             m.team2 === results[resultIndex].team2
@@ -234,7 +225,6 @@ app.delete('/api/results/:id', (req, res) => {
             matches[matchIndex].status = 'Запланирован';
         }
         
-        // Обновляем таблицу
         updateTableFromResults();
         
         res.json({ message: 'Результат удалён' });
@@ -253,11 +243,9 @@ app.post('/api/perform-draw', (req, res) => {
         return res.status(400).json({ error: 'Недостаточно команд для жеребьёвки' });
     }
     
-    // Создаём копию команд для жеребьёвки
     const shuffledTeams = [...teams].sort(() => Math.random() - 0.5);
     const pairs = [];
     
-    // Формируем пары (простой алгоритм - чётные против нечётных)
     for (let i = 0; i < shuffledTeams.length - 1; i += 2) {
         pairs.push({
             team1: shuffledTeams[i].name,
@@ -265,13 +253,12 @@ app.post('/api/perform-draw', (req, res) => {
         });
     }
     
-    // Сохраняем матчи для тура
     pairs.forEach(pair => {
         matches.push({
             id: Date.now().toString() + Math.random(),
             team1: pair.team1,
             team2: pair.team2,
-            date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // Через неделю
+            date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
             status: 'Запланирован'
         });
     });
@@ -282,7 +269,6 @@ app.post('/api/perform-draw', (req, res) => {
 });
 
 function updateTableFromResults() {
-    // Сбрасываем таблицу
     table.forEach(team => {
         team.played = 0;
         team.wins = 0;
@@ -291,17 +277,14 @@ function updateTableFromResults() {
         team.points = 0;
     });
     
-    // Обновляем статистику по результатам
     results.forEach(result => {
         const team1Index = table.findIndex(t => t.name === result.team1);
         const team2Index = table.findIndex(t => t.name === result.team2);
         
         if (team1Index !== -1 && team2Index !== -1) {
-            // Обновляем количество игр
             table[team1Index].played++;
             table[team2Index].played++;
             
-            // Обновляем результаты
             if (result.score1 > result.score2) {
                 table[team1Index].wins++;
                 table[team1Index].points += 3;
@@ -326,5 +309,5 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`🚀 Server is running on port ${PORT}`);
 });
