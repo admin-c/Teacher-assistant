@@ -1,6 +1,5 @@
-// Этот файл объединяет все API вызовы
 const API_CONFIG = {
-    baseUrl: 'https://champion-league.onrender.com/api', // Замените на ваш API URL
+    baseUrl: 'https://champion-league.onrender.com/api',
     headers: {
         'Content-Type': 'application/json'
     }
@@ -42,9 +41,19 @@ class ApiService {
         return this.makeRequest('/news');
     }
     
+    // Получение команд
+    static async getTeams() {
+        return this.makeRequest('/teams');
+    }
+    
     // Получение расписания матчей
     static async getMatches() {
         return this.makeRequest('/matches');
+    }
+    
+    // Получение результатов
+    static async getResults() {
+        return this.makeRequest('/results');
     }
     
     // Получение турнирной таблицы
@@ -71,6 +80,21 @@ class ApiService {
         });
     }
     
+    // Редактирование команды
+    static async updateTeam(id, teamData) {
+        return this.makeRequest(`/teams/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(teamData)
+        });
+    }
+    
+    // Удаление команды
+    static async deleteTeam(id) {
+        return this.makeRequest(`/teams/${id}`, {
+            method: 'DELETE'
+        });
+    }
+    
     // Добавление новости
     static async addNews(newsData) {
         return this.makeRequest('/news', {
@@ -87,6 +111,21 @@ class ApiService {
         });
     }
     
+    // Обновление счёта матча
+    static async updateMatchScore(matchId, scoreData) {
+        return this.makeRequest(`/matches/${matchId}/score`, {
+            method: 'PUT',
+            body: JSON.stringify(scoreData)
+        });
+    }
+    
+    // Жеребьёвка
+    static async performDraw() {
+        return this.makeRequest('/perform-draw', {
+            method: 'POST'
+        });
+    }
+    
     // Обновление таблицы
     static async updateTable() {
         return this.makeRequest('/update-table', {
@@ -95,8 +134,6 @@ class ApiService {
     }
 }
 
-// Экспорт для использования в других модулях
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = ApiService;
-
 }
