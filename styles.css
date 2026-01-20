@@ -1,3 +1,16 @@
+:root {
+    --primary-color: #00BFFF;
+    --secondary-color: #0066CC;
+    --accent-color: #FFD700;
+    --dark-bg: #121212;
+    --card-bg: rgba(255, 255, 255, 0.08);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --text-color: white;
+    --success-color: #4CAF50;
+    --warning-color: #FF9800;
+    --danger-color: #f44336;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -5,9 +18,9 @@
 }
 
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #121212;
-    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--dark-bg);
+    color: var(--text-color);
     overflow-x: hidden;
     position: relative;
 }
@@ -33,260 +46,210 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
 }
 
 .content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
     padding: 20px;
+    min-height: 100vh;
     position: relative;
     z-index: 1;
 }
 
-.league-title {
-    font-size: 3.5rem;
-    margin-bottom: 2rem;
-    text-align: center;
-    text-shadow: 0 0 15px rgba(0, 150, 255, 0.8);
-    animation: glow 2.5s infinite alternate, float 3s ease-in-out infinite;
-    opacity: 0;
-    transform: translateY(30px);
-}
-
-@keyframes glow {
-    from {
-        text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #00BFFF, 0 0 20px #00BFFF;
-    }
-    to {
-        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #00BFFF, 0 0 40px #00BFFF;
-    }
-}
-
-@keyframes float {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-10px);
-    }
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.animate-in {
-    animation: fadeInUp 1s forwards;
-}
-
-.animate-in-delay {
-    animation: fadeInUp 1s 0.3s forwards;
-}
-
+/* Навигация */
 .navbar {
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.8);
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 1000;
+    background: rgba(18, 18, 18, 0.95);
     backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(0, 191, 255, 0.3);
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
     flex-wrap: wrap;
+    gap: 5px;
 }
 
 .nav-btn {
-    color: white;
-    text-decoration: none;
-    padding: 12px 25px;
-    margin: 5px 5px;
+    padding: 12px 20px;
+    margin: 2px;
+    background: transparent;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
     border-radius: 25px;
+    cursor: pointer;
     transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+    text-decoration: none;
     display: inline-block;
 }
 
-.nav-btn::before {
+.nav-btn:hover, .nav-btn.active {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
+}
+
+/* Секции */
+.section {
+    display: none;
+    animation: fadeIn 0.5s ease;
+}
+
+.section.active {
+    display: block;
+}
+
+/* Герой-секция */
+.hero-section {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 40px 20px;
+}
+
+.league-title {
+    font-size: clamp(2rem, 5vw, 4rem);
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px var(--primary-color);
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    margin-bottom: 30px;
+}
+
+/* Карточка регистрации */
+.registration-card {
+    max-width: 500px;
+    margin: 0 auto 40px;
+    padding: 30px;
+    background: var(--card-bg);
+    border-radius: 15px;
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+}
+
+.registration-card h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+}
+
+#registration-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#registration-form input {
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+#registration-form input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: rgba(0, 191, 255, 0.1);
+}
+
+#registration-form button {
+    padding: 15px;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: transform 0.2s;
+}
+
+#registration-form button:hover {
+    transform: translateY(-2px);
+}
+
+.status-message {
+    margin-top: 15px;
+    padding: 10px;
+    background: var(--success-color);
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Сетка карточек */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
     content: '';
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(0, 191, 255, 0.4), transparent);
-    transition: all 0.5s ease;
+    background: linear-gradient(90deg, transparent, rgba(0, 191, 255, 0.1), transparent);
+    transition: left 0.5s ease;
 }
 
-.nav-btn:hover::before {
+.card:hover::before {
     left: 100%;
 }
 
-.nav-btn:hover {
-    background: rgba(0, 191, 255, 0.2);
-    transform: translateY(-2px);
-}
-
-.section {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.section.active {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.hidden {
-    display: none;
-}
-
-.registration-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 100%;
-    max-width: 450px;
-    padding: 30px;
-    background: rgba(0, 0, 0, 0.7);
-    border-radius: 15px;
-    backdrop-filter: blur(15px);
-    box-shadow: 0 10px 30px rgba(0, 191, 255, 0.3);
-    opacity: 0;
-    transform: translateY(30px);
-}
-
-.registration-form input {
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #444;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-}
-
-.registration-form input:focus {
-    outline: none;
-    border-color: #00BFFF;
-    background: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
-}
-
-.registration-form button {
-    padding: 15px;
-    border: none;
-    border-radius: 8px;
-    background: linear-gradient(45deg, #00BFFF, #0066CC);
-    color: white;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0, 191, 255, 0.4);
-}
-
-.registration-form button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 191, 255, 0.6);
-    background: linear-gradient(45deg, #0099cc, #004d99);
-}
-
-.status-message {
-    margin-top: 25px;
-    padding: 15px;
-    background: rgba(0, 255, 0, 0.2);
-    border-radius: 8px;
-    text-align: center;
-    font-weight: bold;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
-}
-
-.news-container, .schedule-container, .results-container, .teams-container {
-    margin-top: 25px;
-    display: grid;
-    gap: 20px;
-}
-
-.news-item, .match-item, .result-item, .team-card {
-    background: rgba(255, 255, 255, 0.08);
-    padding: 20px;
-    margin-bottom: 15px;
-    border-radius: 12px;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border-left: 4px solid #00BFFF;
-    position: relative;
-    overflow: hidden;
-}
-
-.news-item::before, .match-item::before, .result-item::before, .team-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(45deg, transparent, rgba(0, 191, 255, 0.1), transparent);
-    transform: translateX(-100%);
-    transition: transform 0.5s ease;
-}
-
-.news-item:hover::before, .match-item:hover::before, .result-item:hover::before, .team-card:hover::before {
-    transform: translateX(100%);
-}
-
-.news-item:hover, .match-item:hover, .result-item:hover, .team-card:hover {
-    transform: translateY(-8px);
-    background: rgba(255, 255, 255, 0.12);
+.card:hover {
+    transform: translateY(-5px);
     box-shadow: 0 10px 25px rgba(0, 191, 255, 0.2);
+}
+
+/* Таблица */
+.table-container {
+    overflow-x: auto;
+    margin-top: 20px;
 }
 
 .tournament-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 25px;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--card-bg);
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 191, 255, 0.2);
-}
-
-.tournament-table th, .tournament-table td {
-    padding: 15px;
-    text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .tournament-table th {
-    background: linear-gradient(to bottom, #00BFFF, #0066CC);
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
     color: white;
-    font-weight: bold;
+    padding: 12px;
+    font-weight: 600;
+}
+
+.tournament-table td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .tournament-table tr:nth-child(even) {
@@ -294,73 +257,96 @@ body {
 }
 
 .tournament-table tr:hover {
-    background: rgba(0, 191, 255, 0.15);
-    transform: scale(1.01);
+    background: rgba(0, 191, 255, 0.1);
+}
+
+/* Кнопка установки */
+.install-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1rem;
+    z-index: 1001;
+    box-shadow: 0 5px 15px rgba(0, 191, 255, 0.4);
     transition: all 0.3s ease;
 }
 
+.install-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 191, 255, 0.6);
+}
+
 /* Админ-панель */
-.admin-login, #admin-panel {
-    max-width: 1000px;
-    margin: 50px auto;
+.admin-body {
+    background: var(--dark-bg);
+}
+
+.admin-login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.login-card {
+    background: var(--card-bg);
     padding: 40px;
-    background: rgba(0, 0, 0, 0.85);
     border-radius: 15px;
-    backdrop-filter: blur(15px);
-    box-shadow: 0 15px 35px rgba(0, 191, 255, 0.3);
-    position: relative;
-    overflow: hidden;
+    border: 1px solid var(--border-color);
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
 }
 
 .admin-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .logout-btn {
     padding: 10px 20px;
-    background: #ff4757;
+    background: var(--danger-color);
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.logout-btn:hover {
-    background: #ff3742;
-    transform: scale(1.05);
 }
 
 .admin-nav {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 30px;
+    gap: 5px;
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .admin-tab-btn {
     padding: 12px 20px;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: none;
+    background: transparent;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .admin-tab-btn:hover, .admin-tab-btn.active {
-    background: #00BFFF;
-    transform: translateY(-2px);
+    background: var(--primary-color);
+    border-color: var(--primary-color);
 }
 
-.admin-tabs-container {
-    background: rgba(0, 0, 0, 0.7);
-    border-radius: 12px;
+.admin-main {
     padding: 20px;
 }
 
@@ -370,76 +356,93 @@ body {
 
 .admin-tab-content.active {
     display: block;
-    animation: fadeIn 0.5s ease;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+.admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
 }
 
-.admin-tab-content h3 {
-    margin-bottom: 20px;
-    color: #00BFFF;
+.admin-card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
 }
 
-.admin-tab-content textarea {
-    width: 100%;
-    height: 120px;
-    padding: 15px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: 1px solid #444;
-    margin-bottom: 15px;
-    font-size: 1rem;
-    resize: vertical;
-    transition: all 0.3s ease;
-}
-
-.admin-tab-content textarea:focus {
-    outline: none;
-    border-color: #00BFFF;
-    background: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
-}
-
-.admin-tab-content button {
-    padding: 12px 20px;
-    background: #00BFFF;
+.primary-btn {
+    padding: 12px 24px;
+    background: var(--primary-color);
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    margin-bottom: 20px;
 }
 
-.admin-tab-content button:hover {
-    background: #0099cc;
-    transform: translateY(-2px);
+/* Анимации */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+    animation: fadeIn 1s ease;
 }
 
 /* Адаптивность */
 @media (max-width: 768px) {
-    .league-title {
-        font-size: 2.2rem;
-    }
-    
-    .registration-form {
-        max-width: 100%;
-        padding: 20px;
-    }
-    
     .navbar {
         flex-direction: column;
         align-items: center;
+        padding: 10px 0;
     }
     
     .nav-btn {
         width: 100%;
         text-align: center;
-        margin: 5px 0;
-        padding: 10px;
+        margin: 2px 0;
+        padding: 12px 15px;
+    }
+    
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .install-btn {
+        bottom: 10px;
+        right: 10px;
+        padding: 12px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .league-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-section {
+        padding: 20px 10px;
+    }
+    
+    .registration-card {
+        padding: 20px;
+        margin: 0 10px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .league-title {
+        font-size: 2rem;
+    }
+    
+    .subtitle {
+        font-size: 1rem;
     }
     
     .tournament-table {
@@ -447,20 +450,6 @@ body {
     }
     
     .tournament-table th, .tournament-table td {
-        padding: 10px 5px;
-    }
-    
-    .admin-login, #admin-panel {
-        margin: 20px;
-        padding: 25px;
-    }
-    
-    .admin-nav {
-        flex-direction: column;
-    }
-    
-    .admin-tab-btn {
-        width: 100%;
-        text-align: left;
+        padding: 8px 4px;
     }
 }
