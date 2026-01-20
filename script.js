@@ -1,5 +1,5 @@
 // API конфигурация
-const API_BASE_URL = 'https://your-api-url.onrender.com/api'; // Замените на ваш API URL
+const API_BASE_URL = 'https://champion-league.onrender.com/api'; // Замените на ваш API URL
 
 // Проверка регистрации пользователя
 document.addEventListener('DOMContentLoaded', () => {
@@ -139,4 +139,5 @@ if ('serviceWorker' in navigator) {
             .then(registration => console.log('SW registered'))
             .catch(error => console.log('SW registration failed'));
     });
+
 }
