@@ -1,5 +1,5 @@
 // API конфигурация
-const API_BASE_URL = 'https://your-api-url.onrender.com/api'; // Замените на ваш API URL
+const API_BASE_URL = 'https://champion-league.onrender.com/api'; // Замените на ваш API URL
 let isAuthenticated = false;
 
 function login() {
@@ -158,4 +158,5 @@ async function updateTable() {
     } catch (error) {
         console.error('Ошибка обновления таблицы:', error);
     }
+
 }
