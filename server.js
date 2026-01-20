@@ -223,6 +223,17 @@ app.delete('/api/results/:id', (req, res) => {
     if (resultIndex !== -1) {
         results.splice(resultIndex, 1);
         
+        // Обновляем соответствующий матч
+        const matchIndex = matches.findIndex(m => 
+            m.team1 === results[resultIndex].team1 && 
+            m.team2 === results[resultIndex].team2
+        );
+        if (matchIndex !== -1) {
+            delete matches[matchIndex].score1;
+            delete matches[matchIndex].score2;
+            matches[matchIndex].status = 'Запланирован';
+        }
+        
         // Обновляем таблицу
         updateTableFromResults();
         
