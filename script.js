@@ -3,6 +3,7 @@ const API_BASE_URL = 'https://champion-league.onrender.com/api';
 
 // Текущая страница
 let currentPage = 'home';
+let deferredPrompt; // Для PWA установки
 
 document.addEventListener('DOMContentLoaded', () => {
     // Инициализация SPA
@@ -17,6 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Загружаем начальные данные для главной страницы
     loadNews();
     loadTeams();
+    
+    // Инициализация PWA
+    initPWA();
 });
 
 function initSPA() {
@@ -26,6 +30,14 @@ function initSPA() {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const pageId = link.getAttribute('data-page');
+            
+            // Убираем активный класс с текущей кнопки
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Добавляем активный класс к нажатой кнопке
+            link.classList.add('active');
             
             // Сохраняем текущую страницу перед переключением
             const oldPage = currentPage;
@@ -80,7 +92,12 @@ async function registerTeam(e) {
         if (response.ok) {
             document.getElementById('status-message').classList.remove('hidden');
             document.getElementById('status-message').style.animation = 'pulse 2s infinite';
-            e.target.reset(); // Используем e.target вместо form
+            e.target.reset();
+            
+            // Через 3 секунды скрываем сообщение
+            setTimeout(() => {
+                document.getElementById('status-message').classList.add('hidden');
+            }, 3000);
         } else {
             alert('Ошибка при регистрации команды');
         }
@@ -103,7 +120,7 @@ async function loadNews() {
 
         news.forEach((item, index) => {
             const newsElement = document.createElement('div');
-            newsElement.className = 'news-item load-in';
+            newsElement.className = 'card load-in';
             newsElement.style.animationDelay = `${index * 0.1}s`;
             newsElement.innerHTML = `
                 <h3>${item.title}</h3>
@@ -130,7 +147,7 @@ async function loadTeams() {
 
         teams.forEach((team, index) => {
             const teamCard = document.createElement('div');
-            teamCard.className = 'team-card load-in';
+            teamCard.className = 'card load-in';
             teamCard.style.animationDelay = `${index * 0.1}s`;
             teamCard.innerHTML = `
                 <h3>${team.name}</h3>
@@ -156,12 +173,14 @@ async function loadSchedule() {
 
         matches.forEach((match, index) => {
             const matchElement = document.createElement('div');
-            matchElement.className = 'match-item load-in';
+            matchElement.className = 'card load-in';
             matchElement.style.animationDelay = `${index * 0.1}s`;
             matchElement.innerHTML = `
                 <h3>${match.team1} vs ${match.team2}</h3>
-                <p>Дата: ${new Date(match.date).toLocaleString()}</p>
-                <p>Статус: ${match.status}</p>
+                <p>📅 ${new Date(match.date).toLocaleString()}</p>
+                <p>📊 Статус: ${match.status}</p>
+                ${match.score1 !== undefined && match.score2 !== undefined ? 
+                    `<p>🏆 Счёт: ${match.score1} - ${match.score2}</p>` : ''}
             `;
             container.appendChild(matchElement);
         });
@@ -183,12 +202,12 @@ async function loadResults() {
 
         results.forEach((result, index) => {
             const resultElement = document.createElement('div');
-            resultElement.className = 'result-item load-in';
+            resultElement.className = 'card load-in';
             resultElement.style.animationDelay = `${index * 0.1}s`;
             resultElement.innerHTML = `
                 <h3>${result.team1} ${result.score1} - ${result.score2} ${result.team2}</h3>
-                <p>Тур: ${result.round}</p>
-                <p>Дата: ${new Date(result.date).toLocaleDateString()}</p>
+                <p> Тур: ${result.round}</p>
+                <p>📅 ${new Date(result.date).toLocaleDateString()}</p>
             `;
             container.appendChild(resultElement);
         });
@@ -225,6 +244,48 @@ async function loadTable() {
         });
     } catch (error) {
         console.error('Ошибка загрузки таблицы:', error);
+    }
+}
+
+// Инициализация PWA
+function initPWA() {
+    // Проверяем возможность установки
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Предотвращаем стандартный поп-ап
+        e.preventDefault();
+        // Сохраняем событие для дальнейшего использования
+        deferredPrompt = e;
+        // Показываем кнопку установки
+        const installButton = document.getElementById('install-button');
+        if (installButton) {
+            installButton.classList.remove('hidden');
+            installButton.onclick = showInstallPromotion;
+        }
+    });
+    
+    // Проверяем, уже ли установлено приложение
+    window.addEventListener('appinstalled', () => {
+        console.log('PWA was installed');
+        const installButton = document.getElementById('install-button');
+        if (installButton) {
+            installButton.classList.add('hidden');
+        }
+    });
+}
+
+function showInstallPromotion() {
+    if (deferredPrompt) {
+        // Показываем нативный поп-ап установки
+        deferredPrompt.prompt();
+        // Ждем ответа пользователя
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('User accepted the install prompt');
+            } else {
+                console.log('User dismissed the install prompt');
+            }
+            deferredPrompt = null;
+        });
     }
 }
 
