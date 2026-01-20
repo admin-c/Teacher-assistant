@@ -3,80 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Админ-панель</title>
+    <title>Админ-панель - Лъилибская Лига</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="admin-body">
     <div id="login-form" class="admin-login">
-        <h2>Вход в админ-панель</h2>
-        <input type="password" id="admin-password" placeholder="Введите пароль">
-        <button onclick="login()">Войти</button>
+        <div class="login-card">
+            <h2>Вход в админ-панель</h2>
+            <input type="password" id="admin-password" placeholder="Введите пароль">
+            <button onclick="login()">Войти</button>
+        </div>
     </div>
 
     <div id="admin-panel" class="hidden">
-        <div class="admin-header">
-            <h2>Админ-панель</h2>
+        <header class="admin-header">
+            <h1>Админ-панель</h1>
             <button onclick="logout()" class="logout-btn">Выйти</button>
-        </div>
+        </header>
 
-        <div class="admin-nav">
+        <nav class="admin-nav">
             <button class="admin-tab-btn active" data-tab="registrations">Заявки</button>
             <button class="admin-tab-btn" data-tab="teams">Команды</button>
             <button class="admin-tab-btn" data-tab="draw">Жеребьёвка</button>
             <button class="admin-tab-btn" data-tab="matches">Матчи</button>
             <button class="admin-tab-btn" data-tab="results">Результаты</button>
             <button class="admin-tab-btn" data-tab="news">Новости</button>
-        </div>
+        </nav>
 
-        <div class="admin-tabs-container">
+        <main class="admin-main">
             <!-- Заявки -->
             <div id="tab-registrations" class="admin-tab-content active">
                 <h3>Ожидают подтверждения</h3>
-                <div id="pending-registrations">
+                <div id="pending-registrations" class="admin-grid">
                     <!-- Заявки будут загружены -->
                 </div>
             </div>
 
             <!-- Команды -->
-            <div id="tab-teams" class="admin-tab-content hidden">
+            <div id="tab-teams" class="admin-tab-content">
                 <h3>Управление командами</h3>
-                <div id="teams-list">
+                <div id="teams-list" class="admin-grid">
                     <!-- Команды будут загружены -->
                 </div>
             </div>
 
             <!-- Жеребьёвка -->
-            <div id="tab-draw" class="admin-tab-content hidden">
+            <div id="tab-draw" class="admin-tab-content">
                 <h3>Жеребьёвка</h3>
-                <button onclick="performDraw()">Сгенерировать пары</button>
-                <div id="draw-results">
+                <button onclick="performDraw()" class="primary-btn">Сгенерировать пары</button>
+                <div id="draw-results" class="draw-results">
                     <!-- Результаты жеребьёвки -->
                 </div>
             </div>
 
             <!-- Матчи -->
-            <div id="tab-matches" class="admin-tab-content hidden">
+            <div id="tab-matches" class="admin-tab-content">
                 <h3>Матчи</h3>
-                <div id="matches-list">
+                <div id="matches-list" class="admin-grid">
                     <!-- Матчи будут загружены -->
                 </div>
             </div>
 
             <!-- Результаты -->
-            <div id="tab-results" class="admin-tab-content hidden">
+            <div id="tab-results" class="admin-tab-content">
                 <h3>Результаты тура</h3>
-                <div id="results-list">
+                <div id="results-list" class="admin-grid">
                     <!-- Результаты будут загружены -->
                 </div>
             </div>
 
             <!-- Новости -->
-            <div id="tab-news" class="admin-tab-content hidden">
+            <div id="tab-news" class="admin-tab-content">
                 <h3>Добавить новость</h3>
                 <textarea id="news-content" placeholder="Текст новости"></textarea>
-                <button onclick="addNews()">Добавить новость</button>
+                <button onclick="addNews()" class="primary-btn">Добавить новость</button>
             </div>
-        </div>
+        </main>
     </div>
 
     <script src="admin.js"></script>
