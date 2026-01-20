@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Админ-панель - Лъилибская Лига</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="admin-body">
     <div id="login-form" class="admin-login">
         <div class="login-card">
-            <h2>Вход в админ-панель</h2>
+            <h2>🔐 Вход в админ-панель</h2>
             <input type="password" id="admin-password" placeholder="Введите пароль">
             <button onclick="login()">Войти</button>
         </div>
@@ -17,23 +18,23 @@
 
     <div id="admin-panel" class="hidden">
         <header class="admin-header">
-            <h1>Админ-панель</h1>
-            <button onclick="logout()" class="logout-btn">Выйти</button>
+            <h1>⚙️ Админ-панель</h1>
+            <button onclick="logout()" class="logout-btn">🚪 Выйти</button>
         </header>
 
         <nav class="admin-nav">
-            <button class="admin-tab-btn active" data-tab="registrations">Заявки</button>
-            <button class="admin-tab-btn" data-tab="teams">Команды</button>
-            <button class="admin-tab-btn" data-tab="draw">Жеребьёвка</button>
-            <button class="admin-tab-btn" data-tab="matches">Матчи</button>
-            <button class="admin-tab-btn" data-tab="results">Результаты</button>
-            <button class="admin-tab-btn" data-tab="news">Новости</button>
+            <button class="admin-tab-btn active" data-tab="registrations">📋 Заявки</button>
+            <button class="admin-tab-btn" data-tab="teams">👥 Команды</button>
+            <button class="admin-tab-btn" data-tab="draw">🎲 Жеребьёвка</button>
+            <button class="admin-tab-btn" data-tab="matches">⚽ Матчи</button>
+            <button class="admin-tab-btn" data-tab="results">📊 Результаты</button>
+            <button class="admin-tab-btn" data-tab="news">📰 Новости</button>
         </nav>
 
         <main class="admin-main">
             <!-- Заявки -->
             <div id="tab-registrations" class="admin-tab-content active">
-                <h3>Ожидают подтверждения</h3>
+                <h3>📋 Ожидают подтверждения</h3>
                 <div id="pending-registrations" class="admin-grid">
                     <!-- Заявки будут загружены -->
                 </div>
@@ -41,7 +42,7 @@
 
             <!-- Команды -->
             <div id="tab-teams" class="admin-tab-content">
-                <h3>Управление командами</h3>
+                <h3>👥 Управление командами</h3>
                 <div id="teams-list" class="admin-grid">
                     <!-- Команды будут загружены -->
                 </div>
@@ -49,16 +50,16 @@
 
             <!-- Жеребьёвка -->
             <div id="tab-draw" class="admin-tab-content">
-                <h3>Жеребьёвка</h3>
-                <button onclick="performDraw()" class="primary-btn">Сгенерировать пары</button>
-                <div id="draw-results" class="draw-results">
+                <h3>🎲 Автоматическая жеребьёвка</h3>
+                <button onclick="performDraw()" class="primary-btn">🔄 Сгенерировать пары</button>
+                <div id="draw-results" class="admin-card">
                     <!-- Результаты жеребьёвки -->
                 </div>
             </div>
 
             <!-- Матчи -->
             <div id="tab-matches" class="admin-tab-content">
-                <h3>Матчи</h3>
+                <h3>⚽ Управление матчами</h3>
                 <div id="matches-list" class="admin-grid">
                     <!-- Матчи будут загружены -->
                 </div>
@@ -66,7 +67,7 @@
 
             <!-- Результаты -->
             <div id="tab-results" class="admin-tab-content">
-                <h3>Результаты тура</h3>
+                <h3>📊 Результаты тура</h3>
                 <div id="results-list" class="admin-grid">
                     <!-- Результаты будут загружены -->
                 </div>
@@ -74,9 +75,9 @@
 
             <!-- Новости -->
             <div id="tab-news" class="admin-tab-content">
-                <h3>Добавить новость</h3>
-                <textarea id="news-content" placeholder="Текст новости"></textarea>
-                <button onclick="addNews()" class="primary-btn">Добавить новость</button>
+                <h3>📰 Добавить новость</h3>
+                <textarea id="news-content" placeholder="Введите текст новости..." rows="6"></textarea>
+                <button onclick="addNews()" class="primary-btn">➕ Добавить новость</button>
             </div>
         </main>
     </div>
