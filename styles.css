@@ -9,6 +9,7 @@ body {
     background-color: #121212;
     color: white;
     overflow-x: hidden;
+    position: relative;
 }
 
 .background-container {
@@ -75,14 +76,6 @@ body {
     }
 }
 
-.animate-in {
-    animation: fadeInUp 1s forwards;
-}
-
-.animate-in-delay {
-    animation: fadeInUp 1s 0.3s forwards;
-}
-
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -92,6 +85,78 @@ body {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.animate-in {
+    animation: fadeInUp 1s forwards;
+}
+
+.animate-in-delay {
+    animation: fadeInUp 1s 0.3s forwards;
+}
+
+.navbar {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 191, 255, 0.3);
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    color: white;
+    text-decoration: none;
+    padding: 12px 25px;
+    margin: 5px 5px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.nav-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 191, 255, 0.4), transparent);
+    transition: all 0.5s ease;
+}
+
+.nav-btn:hover::before {
+    left: 100%;
+}
+
+.nav-btn:hover {
+    background: rgba(0, 191, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.section {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.section.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.hidden {
+    display: none;
 }
 
 .registration-form {
@@ -163,66 +228,13 @@ body {
     }
 }
 
-.hidden {
-    display: none;
-}
-
-.navbar {
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.8);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(0, 191, 255, 0.3);
-}
-
-.navbar a {
-    color: white;
-    text-decoration: none;
-    padding: 12px 25px;
-    margin: 0 10px;
-    border-radius: 25px;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.navbar a::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(0, 191, 255, 0.4), transparent);
-    transition: all 0.5s ease;
-}
-
-.navbar a:hover::before {
-    left: 100%;
-}
-
-.navbar a:hover {
-    background: rgba(0, 191, 255, 0.2);
-    transform: translateY(-2px);
-}
-
-.container {
-    padding: 30px 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.news-container, .schedule-container {
+.news-container, .schedule-container, .results-container, .teams-container {
     margin-top: 25px;
     display: grid;
     gap: 20px;
 }
 
-.news-item, .match-item {
+.news-item, .match-item, .result-item, .team-card {
     background: rgba(255, 255, 255, 0.08);
     padding: 20px;
     margin-bottom: 15px;
@@ -233,7 +245,7 @@ body {
     overflow: hidden;
 }
 
-.news-item::before, .match-item::before {
+.news-item::before, .match-item::before, .result-item::before, .team-card::before {
     content: '';
     position: absolute;
     top: 0;
@@ -245,11 +257,11 @@ body {
     transition: transform 0.5s ease;
 }
 
-.news-item:hover::before, .match-item:hover::before {
+.news-item:hover::before, .match-item:hover::before, .result-item:hover::before, .team-card:hover::before {
     transform: translateX(100%);
 }
 
-.news-item:hover, .match-item:hover {
+.news-item:hover, .match-item:hover, .result-item:hover, .team-card:hover {
     transform: translateY(-8px);
     background: rgba(255, 255, 255, 0.12);
     box-shadow: 0 10px 25px rgba(0, 191, 255, 0.2);
@@ -287,8 +299,9 @@ body {
     transition: all 0.3s ease;
 }
 
+/* Админ-панель */
 .admin-login, #admin-panel {
-    max-width: 700px;
+    max-width: 1000px;
     margin: 50px auto;
     padding: 40px;
     background: rgba(0, 0, 0, 0.85);
@@ -299,72 +312,78 @@ body {
     overflow: hidden;
 }
 
-.admin-login::before, #admin-panel::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(0, 191, 255, 0.1) 0%, transparent 70%);
-    z-index: -1;
-    animation: rotate 10s linear infinite;
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-@keyframes rotate {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-.admin-login input {
-    width: 100%;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    border: 1px solid #444;
-    background: rgba(255, 255, 255, 0.1);
+.logout-btn {
+    padding: 10px 20px;
+    background: #ff4757;
     color: white;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-}
-
-.admin-login input:focus {
-    outline: none;
-    border-color: #00BFFF;
-    background: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
-}
-
-.admin-login button, #admin-panel button {
-    width: 100%;
-    padding: 15px;
     border: none;
     border-radius: 8px;
-    background: linear-gradient(45deg, #00BFFF, #0066CC);
-    color: white;
-    font-size: 1.1rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0, 191, 255, 0.4);
 }
 
-.admin-login button:hover, #admin-panel button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 191, 255, 0.6);
-    background: linear-gradient(45deg, #0099cc, #004d99);
+.logout-btn:hover {
+    background: #ff3742;
+    transform: scale(1.05);
 }
 
-#admin-panel section {
-    margin-bottom: 35px;
-    padding-bottom: 25px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.admin-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 30px;
 }
 
-#admin-panel textarea {
+.admin-tab-btn {
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.admin-tab-btn:hover, .admin-tab-btn.active {
+    background: #00BFFF;
+    transform: translateY(-2px);
+}
+
+.admin-tabs-container {
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.admin-tab-content {
+    display: none;
+}
+
+.admin-tab-content.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.admin-tab-content h3 {
+    margin-bottom: 20px;
+    color: #00BFFF;
+}
+
+.admin-tab-content textarea {
     width: 100%;
     height: 120px;
     padding: 15px;
@@ -378,14 +397,29 @@ body {
     transition: all 0.3s ease;
 }
 
-#admin-panel textarea:focus {
+.admin-tab-content textarea:focus {
     outline: none;
     border-color: #00BFFF;
     background: rgba(255, 255, 255, 0.15);
     box-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
 }
 
-/* Анимации для мобильных устройств */
+.admin-tab-content button {
+    padding: 12px 20px;
+    background: #00BFFF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.admin-tab-content button:hover {
+    background: #0099cc;
+    transform: translateY(-2px);
+}
+
+/* Адаптивность */
 @media (max-width: 768px) {
     .league-title {
         font-size: 2.2rem;
@@ -401,7 +435,7 @@ body {
         align-items: center;
     }
     
-    .navbar a {
+    .nav-btn {
         width: 100%;
         text-align: center;
         margin: 5px 0;
@@ -420,38 +454,13 @@ body {
         margin: 20px;
         padding: 25px;
     }
-}
-
-/* Анимации для загрузки элементов */
-.load-in {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: loadIn 0.8s forwards;
-}
-
-@keyframes loadIn {
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    
+    .admin-nav {
+        flex-direction: column;
     }
-}
-
-.delay-1 {
-    animation-delay: 0.1s;
-}
-
-.delay-2 {
-    animation-delay: 0.2s;
-}
-
-.delay-3 {
-    animation-delay: 0.3s;
-}
-
-.delay-4 {
-    animation-delay: 0.4s;
-}
-
-.delay-5 {
-    animation-delay: 0.5s;
+    
+    .admin-tab-btn {
+        width: 100%;
+        text-align: left;
+    }
 }
