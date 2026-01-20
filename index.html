@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a237e">
+    <title>Либилская Лига - FC Mobile</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Анимированный фон -->
+    <div class="animated-bg"></div>
+    <div class="particles-container" id="particles"></div>
+    
+    <!-- Контент -->
+    <div class="container">
+        <header class="main-header">
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-trophy trophy-icon"></i>
+                    <span class="logo-text">LL</span>
+                </div>
+                <h1 class="league-name">ЛИБИЛСКАЯ ЛИГА</h1>
+                <p class="league-subtitle">Чемпионат по FC Mobile</p>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="registration-card glass-effect">
+                <h2 class="section-title"><i class="fas fa-user-plus"></i> Регистрация на чемпионат</h2>
+                
+                <div class="form-group">
+                    <label for="teamName"><i class="fas fa-flag"></i> Название команды</label>
+                    <input type="text" id="teamName" placeholder="Введите название команды" class="modern-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="ownerName"><i class="fas fa-user"></i> Владелец команды</label>
+                    <input type="text" id="ownerName" placeholder="Введите ваш никнейм" class="modern-input">
+                </div>
+                
+                <button id="registerBtn" class="register-btn">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Записаться на чемпионат</span>
+                </button>
+                
+                <div class="already-registered">
+                    <a href="main.html" class="already-btn">
+                        <i class="fas fa-check-circle"></i>
+                        Уже записан? Перейти в меню
+                    </a>
+                </div>
+            </div>
+            
+            <div class="info-cards">
+                <div class="info-card glass-effect">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h3>Даты проведения</h3>
+                    <p>С 24.01.2026<br>Каждые суббота и воскресенье</p>
+                </div>
+                
+                <div class="info-card glass-effect">
+                    <i class="fas fa-futbol"></i>
+                    <h3>Формат</h3>
+                    <p>Лига Чемпионов<br>FC Mobile</p>
+                </div>
+                
+                <div class="info-card glass-effect">
+                    <i class="fas fa-trophy"></i>
+                    <h3>Призы</h3>
+                    <p>Ценные призы<br>и звание чемпиона</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="main-footer">
+            <button id="installBtn" class="install-btn">
+                <i class="fas fa-download"></i>
+                Установить приложение
+            </button>
+            <p class="copyright">© 2026 Либилская Лига. Все права защищены.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Регистрация PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js');
+            });
+        }
+
+        // Установка PWA
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'flex';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    installBtn.style.display = 'none';
+                }
+                deferredPrompt = null;
+            }
+        });
+    </script>
+</body>
+</html>

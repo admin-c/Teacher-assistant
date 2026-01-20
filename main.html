@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главное меню - Либилская Лига</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <div class="particles-container" id="particles"></div>
+    
+    <div class="container">
+        <header class="main-header">
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-trophy trophy-icon"></i>
+                    <span class="logo-text">LL</span>
+                </div>
+                <h1 class="league-name">ГЛАВНОЕ МЕНЮ</h1>
+            </div>
+        </header>
+
+        <nav class="main-nav">
+            <a href="index.html" class="nav-btn">
+                <i class="fas fa-home"></i>
+                <span>Главная</span>
+            </a>
+            <a href="table.html" class="nav-btn">
+                <i class="fas fa-table"></i>
+                <span>Таблица</span>
+            </a>
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <span id="userTeam">Загрузка...</span>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <!-- Новости -->
+            <section class="news-section glass-effect">
+                <h2 class="section-title">
+                    <i class="fas fa-newspaper"></i>
+                    Последние новости
+                </h2>
+                <div class="news-container" id="newsContainer">
+                    <!-- Новости будут загружаться здесь -->
+                </div>
+            </section>
+
+            <!-- Ближайшие матчи -->
+            <section class="matches-section glass-effect">
+                <h2 class="section-title">
+                    <i class="fas fa-calendar-check"></i>
+                    Ближайшие матчи
+                </h2>
+                <div class="matches-list" id="matchesList">
+                    <div class="match-card">
+                        <div class="match-date">24.01.2026</div>
+                        <div class="match-teams">
+                            <span class="team">Жеребьевка групп</span>
+                            <span class="vs">vs</span>
+                            <span class="team">Определение соперников</span>
+                        </div>
+                        <div class="match-time">20:00</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Правила -->
+            <section class="rules-section glass-effect">
+                <h2 class="section-title">
+                    <i class="fas fa-book"></i>
+                    Правила турнира
+                </h2>
+                <ul class="rules-list">
+                    <li><i class="fas fa-check-circle"></i> Матчи проводятся по выходным</li>
+                    <li><i class="fas fa-check-circle"></i> Победа - 3 очка, ничья - 1 очко</li>
+                    <li><i class="fas fa-check-circle"></i> Результаты подтверждаются скриншотами</li>
+                    <li><i class="fas fa-check-circle"></i> За опоздание - техническое поражение</li>
+                    <li><i class="fas fa-check-circle"></i> Админ: @Ali (Telegram)</li>
+                </ul>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

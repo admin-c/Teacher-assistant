@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Турнирная таблица - Либилская Лига</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <div class="particles-container" id="particles"></div>
+    
+    <div class="container">
+        <header class="main-header">
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-trophy trophy-icon"></i>
+                    <span class="logo-text">LL</span>
+                </div>
+                <h1 class="league-name">ТУРНИРНАЯ ТАБЛИЦА</h1>
+            </div>
+        </header>
+
+        <nav class="main-nav">
+            <a href="index.html" class="nav-btn">
+                <i class="fas fa-home"></i>
+                <span>Главная</span>
+            </a>
+            <a href="main.html" class="nav-btn">
+                <i class="fas fa-arrow-left"></i>
+                <span>Назад в меню</span>
+            </a>
+        </nav>
+
+        <main class="main-content">
+            <div class="table-controls glass-effect">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchTeam" placeholder="Поиск команды...">
+                </div>
+                <div class="sort-controls">
+                    <button class="sort-btn active" data-sort="points">
+                        <i class="fas fa-sort-amount-down"></i>
+                        По очкам
+                    </button>
+                    <button class="sort-btn" data-sort="wins">
+                        <i class="fas fa-trophy"></i>
+                        По победам
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-container glass-effect">
+                <table class="league-table" id="leagueTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Команда</th>
+                            <th>Владелец</th>
+                            <th>И</th>
+                            <th>В</th>
+                            <th>Н</th>
+                            <th>П</th>
+                            <th>ЗМ</th>
+                            <th>ПМ</th>
+                            <th>РМ</th>
+                            <th>О</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Данные будут загружены через JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="legend glass-effect">
+                <h3><i class="fas fa-info-circle"></i> Обозначения:</h3>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <span class="legend-color cl"></span>
+                        <span>Места в Лиге Чемпионов</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color el"></span>
+                        <span>Места в Лиге Европы</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color rel"></span>
+                        <span>Зона вылета</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

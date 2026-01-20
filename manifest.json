@@ -1,0 +1,22 @@
+{
+  "name": "Либилская Лига",
+  "short_name": "Либилская Лига",
+  "description": "Чемпионат по FC Mobile - Либилская Лига",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c2461",
+  "theme_color": "#FFD700",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/616/616430.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/616/616430.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

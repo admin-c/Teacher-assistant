@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ панель</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-login {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .admin-section {
+            display: none;
+        }
+        
+        .danger-zone {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    
+    <div class="container">
+        <!-- Экран входа -->
+        <div class="admin-login glass-effect" id="loginScreen">
+            <h2><i class="fas fa-lock"></i> Админ панель</h2>
+            <div class="form-group">
+                <label>Пароль:</label>
+                <input type="password" id="adminPassword" class="modern-input" placeholder="Введите пароль">
+            </div>
+            <button onclick="login()" class="register-btn">
+                <i class="fas fa-sign-in-alt"></i>
+                Войти
+            </button>
+        </div>
+
+        <!-- Админ панель (после входа) -->
+        <div class="admin-section" id="adminPanel">
+            <header class="main-header">
+                <h1><i class="fas fa-cogs"></i> Админ панель Либилской Лиги</h1>
+            </header>
+
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="showTab('pending')">
+                    <i class="fas fa-clock"></i> Ожидающие
+                </button>
+                <button class="admin-tab" onclick="showTab('teams')">
+                    <i class="fas fa-users"></i> Команды
+                </button>
+                <button class="admin-tab" onclick="showTab('news')">
+                    <i class="fas fa-newspaper"></i> Новости
+                </button>
+            </div>
+
+            <!-- Заявки на подтверждение -->
+            <div class="admin-content active" id="pendingTab">
+                <h2><i class="fas fa-user-clock"></i> Заявки на подтверждение</h2>
+                <div class="pending-list" id="pendingList">
+                    <!-- Заявки будут здесь -->
+                </div>
+            </div>
+
+            <!-- Управление командами -->
+            <div class="admin-content" id="teamsTab">
+                <h2><i class="fas fa-edit"></i> Управление командами</h2>
+                <div class="teams-list" id="teamsList">
+                    <!-- Команды будут здесь -->
+                </div>
+            </div>
+
+            <!-- Управление новостями -->
+            <div class="admin-content" id="newsTab">
+                <h2><i class="fas fa-plus-circle"></i> Добавить новость</h2>
+                <div class="form-group">
+                    <label>Заголовок:</label>
+                    <input type="text" id="newsTitle" class="modern-input" placeholder="Заголовок новости">
+                </div>
+                <div class="form-group">
+                    <label>Содержание:</label>
+                    <textarea id="newsContent" class="modern-input" rows="4" placeholder="Текст новости"></textarea>
+                </div>
+                <button onclick="addNews()" class="register-btn">
+                    <i class="fas fa-paper-plane"></i>
+                    Опубликовать новость
+                </button>
+
+                <h3 style="margin-top: 40px;"><i class="fas fa-list"></i> Существующие новости</h3>
+                <div class="news-list" id="adminNewsList">
+                    <!-- Новости будут здесь -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://champion-league.onrender.com/api';
+        
+        function login() {
+            const password = document.getElementById('adminPassword').value;
+            
+            fetch(`${API_BASE}/admin/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                    loadPendingTeams();
+                    loadConfirmedTeams();
+                    loadAdminNews();
+                } else {
+                    alert('Неверный пароль!');
+                }
+            });
+        }
+
+        function showTab(tabName) {
+            // Скрыть все вкладки
+            document.querySelectorAll('.admin-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Убрать активный класс со всех кнопок
+            document.querySelectorAll('.admin-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Показать выбранную вкладку
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            // Активировать кнопку
+            event.target.classList.add('active');
+        }
+
+        function loadPendingTeams() {
+            fetch(`${API_BASE}/admin/pending`)
+            .then(res => res.json())
+            .then(teams => {
+                const container = document.getElementById('pendingList');
+                container.innerHTML = '';
+                
+                teams.forEach(team => {
+                    const div = document.createElement('div');
+                    div.className = 'pending-item glass-effect';
+                    div.innerHTML = `
+                        <div class="team-info">
+                            <h4>${team.teamName}</h4>
+                            <p>Владелец: ${team.ownerName}</p>
+                            <p>Дата: ${new Date(team.registrationDate).toLocaleDateString()}</p>
+                        </div>
+                        <div class="team-actions">
+                            <button onclick="confirmTeam(${team.id})" class="btn-success">
+                                <i class="fas fa-check"></i> Принять
+                            </button>
+                            <button onclick="rejectTeam(${team.id})" class="btn-danger">
+                                <i class="fas fa-times"></i> Отклонить
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            });
+        }
+
+        function confirmTeam(teamId) {
+            fetch(`${API_BASE}/admin/confirm`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ teamId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Команда подтверждена!');
+                    loadPendingTeams();
+                    loadConfirmedTeams();
+                }
+            });
+        }
+
+        function rejectTeam(teamId) {
+            fetch(`${API_BASE}/admin/reject`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ teamId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Заявка отклонена!');
+                    loadPendingTeams();
+                }
+            });
+        }
+
+        function loadConfirmedTeams() {
+            fetch(`${API_BASE}/teams`)
+            .then(res => res.json())
+            .then(teams => {
+                const container = document.getElementById('teamsList');
+                container.innerHTML = '';
+                
+                teams.forEach(team => {
+                    const div = document.createElement('div');
+                    div.className = 'team-item glass-effect';
+                    div.innerHTML = `
+                        <div class="team-header">
+                            <h4>${team.teamName}</h4>
+                            <span>Владелец: ${team.ownerName}</span>
+                        </div>
+                        <div class="team-stats">
+                            <div class="stat">
+                                <label>Очки:</label>
+                                <input type="number" id="points_${team.id}" value="${team.points}">
+                            </div>
+                            <div class="stat">
+                                <label>Победы:</label>
+                                <input type="number" id="wins_${team.id}" value="${team.wins}">
+                            </div>
+                            <div class="stat">
+                                <label>Ничьи:</label>
+                                <input type="number" id="draws_${team.id}" value="${team.draws}">
+                            </div>
+                            <div class="stat">
+                                <label>Поражения:</label>
+                                <input type="number" id="losses_${team.id}" value="${team.losses}">
+                            </div>
+                            <div class="stat">
+                                <label>Забито:</label>
+                                <input type="number" id="goalsFor_${team.id}" value="${team.goalsFor}">
+                            </div>
+                            <div class="stat">
+                                <label>Пропущено:</label>
+                                <input type="number" id="goalsAgainst_${team.id}" value="${team.goalsAgainst}">
+                            </div>
+                        </div>
+                        <button onclick="updateTeamStats(${team.id})" class="btn-success">
+                            <i class="fas fa-save"></i> Сохранить
+                        </button>
+                    `;
+                    container.appendChild(div);
+                });
+            });
+        }
+
+        function updateTeamStats(teamId) {
+            const data = {
+                teamId,
+                points: parseInt(document.getElementById(`points_${teamId}`).value) || 0,
+                wins: parseInt(document.getElementById(`wins_${teamId}`).value) || 0,
+                draws: parseInt(document.getElementById(`draws_${teamId}`).value) || 0,
+                losses: parseInt(document.getElementById(`losses_${teamId}`).value) || 0,
+                goalsFor: parseInt(document.getElementById(`goalsFor_${teamId}`).value) || 0,
+                goalsAgainst: parseInt(document.getElementById(`goalsAgainst_${teamId}`).value) || 0
+            };
+            
+            fetch(`${API_BASE}/admin/update-results`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Статистика обновлена!');
+                }
+            });
+        }
+
+        function addNews() {
+            const title = document.getElementById('newsTitle').value;
+            const content = document.getElementById('newsContent').value;
+            
+            if (!title || !content) {
+                alert('Заполните все поля!');
+                return;
+            }
+            
+            fetch(`${API_BASE}/admin/add-news`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, content })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Новость добавлена!');
+                    document.getElementById('newsTitle').value = '';
+                    document.getElementById('newsContent').value = '';
+                    loadAdminNews();
+                }
+            });
+        }
+
+        function loadAdminNews() {
+            fetch(`${API_BASE}/news`)
+            .then(res => res.json())
+            .then(news => {
+                const container = document.getElementById('adminNewsList');
+                container.innerHTML = '';
+                
+                news.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'news-item glass-effect';
+                    div.innerHTML = `
+                        <h4>${item.title}</h4>
+                        <p>${item.content}</p>
+                        <div class="news-meta">${item.date} ${item.time}</div>
+                    `;
+                    container.appendChild(div);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
