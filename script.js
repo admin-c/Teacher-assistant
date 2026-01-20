@@ -1,33 +1,65 @@
 // API конфигурация
 const API_BASE_URL = 'https://champion-league.onrender.com/api';
 
+// Текущая страница
+let currentPage = 'home';
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Проверяем наличие формы регистрации на странице
+    // Инициализация SPA
+    initSPA();
+    
+    // Проверяем форму на главной
     const form = document.getElementById('registration-form');
     if (form) {
         form.addEventListener('submit', registerTeam);
     }
-
-    // Загружаем данные только если они нужны на странице
-    if (document.getElementById('news-container')) {
-        loadNews();
-    }
-    if (document.getElementById('schedule-container')) {
-        loadSchedule();
-    }
-    if (document.querySelector('#tournament-table tbody')) {
-        loadTable();
-    }
-
-    // Анимация появления
-    animateElements();
+    
+    // Загружаем начальные данные
+    loadNews();
+    loadTeams();
+    loadSchedule();
+    loadResults();
+    loadTable();
 });
 
-function animateElements() {
-    const elements = document.querySelectorAll('.animate-in');
-    elements.forEach((el, index) => {
-        el.style.animationDelay = `${index * 0.2}s`;
+function initSPA() {
+    // Обработка кликов по навигации
+    const navLinks = document.querySelectorAll('nav a[data-page]');
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const pageId = link.getAttribute('data-page');
+            switchPage(pageId);
+        });
     });
+}
+
+function switchPage(pageId) {
+    // Скрываем все страницы
+    document.querySelectorAll('.section').forEach(page => {
+        page.classList.remove('active');
+    });
+    
+    // Показываем выбранную страницу
+    const targetPage = document.getElementById(pageId);
+    if (targetPage) {
+        targetPage.classList.add('active');
+        
+        // Загружаем данные для страницы, если нужно
+        if (pageId === 'news') {
+            loadNews();
+        } else if (pageId === 'schedule') {
+            loadSchedule();
+        } else if (pageId === 'results') {
+            loadResults();
+        } else if (pageId === 'table') {
+            loadTable();
+        } else if (pageId === 'teams') {
+            loadTeams();
+        }
+    }
+    
+    currentPage = pageId;
 }
 
 async function registerTeam(e) {
@@ -48,7 +80,7 @@ async function registerTeam(e) {
         if (response.ok) {
             document.getElementById('status-message').classList.remove('hidden');
             document.getElementById('status-message').style.animation = 'pulse 2s infinite';
-            e.target.reset(); // Используем e.target вместо form
+            e.target.reset();
         } else {
             alert('Ошибка при регистрации команды');
         }
@@ -64,7 +96,7 @@ async function loadNews() {
         const news = await response.json();
 
         const container = document.getElementById('news-container');
-        if (!container) return; // Защита от null
+        if (!container) return;
 
         container.innerHTML = '';
 
@@ -84,13 +116,38 @@ async function loadNews() {
     }
 }
 
+async function loadTeams() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/teams`);
+        const teams = await response.json();
+
+        const container = document.getElementById('teams-container');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        teams.forEach((team, index) => {
+            const teamCard = document.createElement('div');
+            teamCard.className = 'team-card load-in';
+            teamCard.style.animationDelay = `${index * 0.1}s`;
+            teamCard.innerHTML = `
+                <h3>${team.name}</h3>
+                <p>Владелец: ${team.owner}</p>
+            `;
+            container.appendChild(teamCard);
+        });
+    } catch (error) {
+        console.error('Ошибка загрузки команд:', error);
+    }
+}
+
 async function loadSchedule() {
     try {
         const response = await fetch(`${API_BASE_URL}/matches`);
         const matches = await response.json();
 
         const container = document.getElementById('schedule-container');
-        if (!container) return; // Защита от null
+        if (!container) return;
 
         container.innerHTML = '';
 
@@ -110,13 +167,39 @@ async function loadSchedule() {
     }
 }
 
+async function loadResults() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/results`);
+        const results = await response.json();
+
+        const container = document.getElementById('results-container');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        results.forEach((result, index) => {
+            const resultElement = document.createElement('div');
+            resultElement.className = 'result-item load-in';
+            resultElement.style.animationDelay = `${index * 0.1}s`;
+            resultElement.innerHTML = `
+                <h3>${result.team1} ${result.score1} - ${result.score2} ${result.team2}</h3>
+                <p>Тур: ${result.round}</p>
+                <p>Дата: ${new Date(result.date).toLocaleDateString()}</p>
+            `;
+            container.appendChild(resultElement);
+        });
+    } catch (error) {
+        console.error('Ошибка загрузки результатов:', error);
+    }
+}
+
 async function loadTable() {
     try {
         const response = await fetch(`${API_BASE_URL}/table`);
         const tableData = await response.json();
 
         const tbody = document.querySelector('#tournament-table tbody');
-        if (!tbody) return; // Защита от null
+        if (!tbody) return;
 
         tbody.innerHTML = '';
 
