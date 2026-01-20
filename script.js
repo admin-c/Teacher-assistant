@@ -14,12 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('submit', registerTeam);
     }
     
-    // Загружаем начальные данные
+    // Загружаем начальные данные для главной страницы
     loadNews();
     loadTeams();
-    loadSchedule();
-    loadResults();
-    loadTable();
 });
 
 function initSPA() {
@@ -29,7 +26,23 @@ function initSPA() {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const pageId = link.getAttribute('data-page');
+            
+            // Сохраняем текущую страницу перед переключением
+            const oldPage = currentPage;
             switchPage(pageId);
+            
+            // Загружаем данные для новой страницы только при переходе
+            if (pageId === 'news') {
+                loadNews();
+            } else if (pageId === 'schedule') {
+                loadSchedule();
+            } else if (pageId === 'results') {
+                loadResults();
+            } else if (pageId === 'table') {
+                loadTable();
+            } else if (pageId === 'teams') {
+                loadTeams();
+            }
         });
     });
 }
@@ -44,19 +57,6 @@ function switchPage(pageId) {
     const targetPage = document.getElementById(pageId);
     if (targetPage) {
         targetPage.classList.add('active');
-        
-        // Загружаем данные для страницы, если нужно
-        if (pageId === 'news') {
-            loadNews();
-        } else if (pageId === 'schedule') {
-            loadSchedule();
-        } else if (pageId === 'results') {
-            loadResults();
-        } else if (pageId === 'table') {
-            loadTable();
-        } else if (pageId === 'teams') {
-            loadTeams();
-        }
     }
     
     currentPage = pageId;
@@ -80,7 +80,7 @@ async function registerTeam(e) {
         if (response.ok) {
             document.getElementById('status-message').classList.remove('hidden');
             document.getElementById('status-message').style.animation = 'pulse 2s infinite';
-            e.target.reset();
+            e.target.reset(); // Используем e.target вместо form
         } else {
             alert('Ошибка при регистрации команды');
         }
@@ -95,8 +95,9 @@ async function loadNews() {
         const response = await fetch(`${API_BASE_URL}/news`);
         const news = await response.json();
 
+        // Проверяем, существует ли элемент на текущей странице
         const container = document.getElementById('news-container');
-        if (!container) return;
+        if (!container) return; // Если элемента нет, выходим
 
         container.innerHTML = '';
 
@@ -121,6 +122,7 @@ async function loadTeams() {
         const response = await fetch(`${API_BASE_URL}/teams`);
         const teams = await response.json();
 
+        // Проверяем, существует ли элемент на текущей странице
         const container = document.getElementById('teams-container');
         if (!container) return;
 
@@ -146,6 +148,7 @@ async function loadSchedule() {
         const response = await fetch(`${API_BASE_URL}/matches`);
         const matches = await response.json();
 
+        // Проверяем, существует ли элемент на текущей странице
         const container = document.getElementById('schedule-container');
         if (!container) return;
 
@@ -172,6 +175,7 @@ async function loadResults() {
         const response = await fetch(`${API_BASE_URL}/results`);
         const results = await response.json();
 
+        // Проверяем, существует ли элемент на текущей странице
         const container = document.getElementById('results-container');
         if (!container) return;
 
@@ -198,6 +202,7 @@ async function loadTable() {
         const response = await fetch(`${API_BASE_URL}/table`);
         const tableData = await response.json();
 
+        // Проверяем, существует ли элемент на текущей странице
         const tbody = document.querySelector('#tournament-table tbody');
         if (!tbody) return;
 
