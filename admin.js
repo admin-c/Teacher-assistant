@@ -41,12 +41,10 @@ document.querySelectorAll('.admin-tab-btn').forEach(button => {
         const tabId = button.getAttribute('data-tab');
         document.querySelectorAll('.admin-tab-content').forEach(content => {
             content.classList.remove('active');
-            content.classList.add('hidden');
         });
         
         const targetTab = document.getElementById(`tab-${tabId}`);
         if (targetTab) {
-            targetTab.classList.remove('hidden');
             targetTab.classList.add('active');
             
             // Загружаем данные для вкладки
@@ -76,13 +74,13 @@ async function loadPendingRegistrations() {
         
         registrations.forEach((reg, index) => {
             const regElement = document.createElement('div');
-            regElement.className = 'registration-item load-in';
+            regElement.className = 'admin-card load-in';
             regElement.style.animationDelay = `${index * 0.1}s`;
             regElement.innerHTML = `
                 <p><strong>Команда:</strong> ${reg.teamName}</p>
                 <p><strong>Владелец:</strong> ${reg.ownerName}</p>
-                <button onclick="approveRegistration('${reg.id}')">Подтвердить</button>
-                <button onclick="rejectRegistration('${reg.id}')">Отклонить</button>
+                <button onclick="approveRegistration('${reg.id}')">✅ Подтвердить</button>
+                <button onclick="rejectRegistration('${reg.id}')">❌ Отклонить</button>
             `;
             container.appendChild(regElement);
         });
@@ -133,13 +131,13 @@ async function loadTeamsList() {
         
         teams.forEach((team, index) => {
             const teamElement = document.createElement('div');
-            teamElement.className = 'team-item load-in';
+            teamElement.className = 'admin-card load-in';
             teamElement.style.animationDelay = `${index * 0.1}s`;
             teamElement.innerHTML = `
                 <p><strong>Команда:</strong> ${team.name}</p>
                 <p><strong>Владелец:</strong> ${team.owner}</p>
-                <button onclick="editTeam('${team.id}', '${team.name}', '${team.owner}')">Редактировать</button>
-                <button onclick="deleteTeam('${team.id}')">Удалить</button>
+                <button onclick="editTeam('${team.id}', '${team.name}', '${team.owner}')">✏️ Редактировать</button>
+                <button onclick="deleteTeam('${team.id}')">🗑️ Удалить</button>
             `;
             container.appendChild(teamElement);
         });
@@ -207,6 +205,8 @@ async function performDraw() {
             pairElement.innerHTML = `<p>${pair.team1} vs ${pair.team2}</p>`;
             container.appendChild(pairElement);
         });
+        
+        alert('Жеребьёвка проведена! Матчи созданы.');
     } catch (error) {
         console.error('Ошибка жеребьёвки:', error);
     }
@@ -225,13 +225,15 @@ async function loadMatchesList() {
         
         matches.forEach((match, index) => {
             const matchElement = document.createElement('div');
-            matchElement.className = 'match-item-admin load-in';
+            matchElement.className = 'admin-card load-in';
             matchElement.style.animationDelay = `${index * 0.1}s`;
             matchElement.innerHTML = `
                 <p><strong>${match.team1} vs ${match.team2}</strong></p>
-                <p>Дата: ${new Date(match.date).toLocaleString()}</p>
-                <p>Статус: ${match.status}</p>
-                <button onclick="updateMatchScore('${match.id}', '${match.team1}', '${match.team2}')">Обновить счёт</button>
+                <p>📅 ${new Date(match.date).toLocaleString()}</p>
+                <p>📊 Статус: ${match.status}</p>
+                ${match.score1 !== undefined && match.score2 !== undefined ? 
+                    `<p>🏆 Счёт: ${match.score1} - ${match.score2}</p>` : ''}
+                <button onclick="updateMatchScore('${match.id}', '${match.team1}', '${match.team2}')">📝 Обновить счёт</button>
             `;
             container.appendChild(matchElement);
         });
@@ -257,7 +259,14 @@ async function updateMatchScore(matchId, team1, team2) {
             if (response.ok) {
                 loadMatchesList();
                 loadResultsList();
-                loadTable(); // Обновляем таблицу
+                
+                // Вызов функции из script.js для обновления таблицы на клиентской стороне
+                if (typeof loadTable === 'function') {
+                    loadTable();
+                } else {
+                    // Если loadTable недоступна, обновляем страницу
+                    location.reload();
+                }
             }
         } catch (error) {
             console.error('Ошибка обновления счёта:', error);
@@ -278,14 +287,14 @@ async function loadResultsList() {
         
         results.forEach((result, index) => {
             const resultElement = document.createElement('div');
-            resultElement.className = 'result-item-admin load-in';
+            resultElement.className = 'admin-card load-in';
             resultElement.style.animationDelay = `${index * 0.1}s`;
             resultElement.innerHTML = `
                 <p><strong>${result.team1} ${result.score1} - ${result.score2} ${result.team2}</strong></p>
-                <p>Тур: ${result.round}</p>
-                <p>Дата: ${new Date(result.date).toLocaleDateString()}</p>
-                <button onclick="editResult('${result.id}', '${result.score1}', '${result.score2}')">Редактировать</button>
-                <button onclick="deleteResult('${result.id}')">Удалить</button>
+                <p> Тур: ${result.round}</p>
+                <p>📅 ${new Date(result.date).toLocaleDateString()}</p>
+                <button onclick="editResult('${result.id}', '${result.score1}', '${result.score2}')">✏️ Редактировать</button>
+                <button onclick="deleteResult('${result.id}')">🗑️ Удалить</button>
             `;
             container.appendChild(resultElement);
         });
@@ -310,7 +319,13 @@ async function editResult(id, currentScore1, currentScore2) {
             
             if (response.ok) {
                 loadResultsList();
-                loadTable();
+                
+                // Обновляем таблицу
+                if (typeof loadTable === 'function') {
+                    loadTable();
+                } else {
+                    location.reload();
+                }
             }
         } catch (error) {
             console.error('Ошибка редактирования результата:', error);
@@ -327,7 +342,13 @@ async function deleteResult(id) {
             
             if (response.ok) {
                 loadResultsList();
-                loadTable();
+                
+                // Обновляем таблицу
+                if (typeof loadTable === 'function') {
+                    loadTable();
+                } else {
+                    location.reload();
+                }
             }
         } catch (error) {
             console.error('Ошибка удаления результата:', error);
