@@ -15,7 +15,7 @@ function login() {
         loadMatchesList();
         loadResultsList();
     } else {
-        alert('Неверный пароль');
+        alert('❌ Неверный пароль!');
     }
 }
 
@@ -29,15 +29,12 @@ function logout() {
 // Переключение вкладок
 document.querySelectorAll('.admin-tab-btn').forEach(button => {
     button.addEventListener('click', () => {
-        // Убираем активный класс у всех кнопок
         document.querySelectorAll('.admin-tab-btn').forEach(btn => {
             btn.classList.remove('active');
         });
         
-        // Добавляем активный класс к нажатой кнопке
         button.classList.add('active');
         
-        // Показываем соответствующую вкладку
         const tabId = button.getAttribute('data-tab');
         document.querySelectorAll('.admin-tab-content').forEach(content => {
             content.classList.remove('active');
@@ -47,7 +44,6 @@ document.querySelectorAll('.admin-tab-btn').forEach(button => {
         if (targetTab) {
             targetTab.classList.add('active');
             
-            // Загружаем данные для вкладки
             if (tabId === 'registrations') {
                 loadPendingRegistrations();
             } else if (tabId === 'teams') {
@@ -72,14 +68,19 @@ async function loadPendingRegistrations() {
         const container = document.getElementById('pending-registrations');
         container.innerHTML = '';
         
+        if (registrations.length === 0) {
+            container.innerHTML = '<div class="admin-card"><p>📋 Заявок нет</p></div>';
+            return;
+        }
+        
         registrations.forEach((reg, index) => {
             const regElement = document.createElement('div');
-            regElement.className = 'admin-card load-in';
-            regElement.style.animationDelay = `${index * 0.1}s`;
+            regElement.className = 'admin-card';
             regElement.innerHTML = `
                 <p><strong>Команда:</strong> ${reg.teamName}</p>
                 <p><strong>Владелец:</strong> ${reg.ownerName}</p>
-                <button onclick="approveRegistration('${reg.id}')">✅ Подтвердить</button>
+                <p><strong>Дата:</strong> ${new Date(reg.timestamp).toLocaleString('ru-RU')}</p>
+                <button onclick="approveRegistration('${reg.id}')" style="margin-right: 10px;">✅ Подтвердить</button>
                 <button onclick="rejectRegistration('${reg.id}')">❌ Отклонить</button>
             `;
             container.appendChild(regElement);
@@ -96,8 +97,9 @@ async function approveRegistration(id) {
         });
         
         if (response.ok) {
+            alert('✅ Заявка подтверждена!');
             loadPendingRegistrations();
-            loadTeamsList(); // Обновляем список команд
+            loadTeamsList();
         }
     } catch (error) {
         console.error('Ошибка подтверждения:', error);
@@ -111,6 +113,7 @@ async function rejectRegistration(id) {
         });
         
         if (response.ok) {
+            alert('❌ Заявка отклонена!');
             loadPendingRegistrations();
         }
     } catch (error) {
@@ -129,14 +132,18 @@ async function loadTeamsList() {
         const container = document.getElementById('teams-list');
         container.innerHTML = '';
         
+        if (teams.length === 0) {
+            container.innerHTML = '<div class="admin-card"><p>👥 Команд нет</p></div>';
+            return;
+        }
+        
         teams.forEach((team, index) => {
             const teamElement = document.createElement('div');
-            teamElement.className = 'admin-card load-in';
-            teamElement.style.animationDelay = `${index * 0.1}s`;
+            teamElement.className = 'admin-card';
             teamElement.innerHTML = `
                 <p><strong>Команда:</strong> ${team.name}</p>
                 <p><strong>Владелец:</strong> ${team.owner}</p>
-                <button onclick="editTeam('${team.id}', '${team.name}', '${team.owner}')">✏️ Редактировать</button>
+                <button onclick="editTeam('${team.id}', '${team.name}', '${team.owner}')" style="margin-right: 10px;">✏️ Редактировать</button>
                 <button onclick="deleteTeam('${team.id}')">🗑️ Удалить</button>
             `;
             container.appendChild(teamElement);
@@ -161,26 +168,28 @@ async function editTeam(id, name, owner) {
             });
             
             if (response.ok) {
+                alert('✅ Команда обновлена!');
                 loadTeamsList();
             }
         } catch (error) {
-            console.error('Ошибка редактирования команды:', error);
+            console.error('Ошибка редактирования:', error);
         }
     }
 }
 
 async function deleteTeam(id) {
-    if (confirm('Вы уверены, что хотите удалить эту команду?')) {
+    if (confirm('⚠️ Вы уверены, что хотите удалить эту команду?')) {
         try {
             const response = await fetch(`${API_BASE_URL}/teams/${id}`, {
                 method: 'DELETE'
             });
             
             if (response.ok) {
+                alert('✅ Команда удалена!');
                 loadTeamsList();
             }
         } catch (error) {
-            console.error('Ошибка удаления команды:', error);
+            console.error('Ошибка удаления:', error);
         }
     }
 }
@@ -197,16 +206,17 @@ async function performDraw() {
         const result = await response.json();
         
         const container = document.getElementById('draw-results');
-        container.innerHTML = '<h4>Сгенерированные пары:</h4>';
+        container.innerHTML = '<h4>🎲 Сгенерированные пары:</h4>';
         
-        result.pairs.forEach(pair => {
-            const pairElement = document.createElement('div');
-            pairElement.className = 'pair-item';
-            pairElement.innerHTML = `<p>${pair.team1} vs ${pair.team2}</p>`;
-            container.appendChild(pairElement);
-        });
-        
-        alert('Жеребьёвка проведена! Матчи созданы.');
+        if (result.pairs && result.pairs.length > 0) {
+            result.pairs.forEach(pair => {
+                const pairElement = document.createElement('p');
+                pairElement.innerHTML = `⚔️ ${pair.team1} vs ${pair.team2}`;
+                container.appendChild(pairElement);
+            });
+        } else {
+            container.innerHTML = '<p>❌ Недостаточно команд для жеребьёвки</p>';
+        }
     } catch (error) {
         console.error('Ошибка жеребьёвки:', error);
     }
@@ -223,13 +233,17 @@ async function loadMatchesList() {
         const container = document.getElementById('matches-list');
         container.innerHTML = '';
         
+        if (matches.length === 0) {
+            container.innerHTML = '<div class="admin-card"><p>⚽ Матчей нет</p></div>';
+            return;
+        }
+        
         matches.forEach((match, index) => {
             const matchElement = document.createElement('div');
-            matchElement.className = 'admin-card load-in';
-            matchElement.style.animationDelay = `${index * 0.1}s`;
+            matchElement.className = 'admin-card';
             matchElement.innerHTML = `
-                <p><strong>${match.team1} vs ${match.team2}</strong></p>
-                <p>📅 ${new Date(match.date).toLocaleString()}</p>
+                <p><strong>⚔️ ${match.team1} vs ${match.team2}</strong></p>
+                <p>📅 ${new Date(match.date).toLocaleString('ru-RU')}</p>
                 <p>📊 Статус: ${match.status}</p>
                 ${match.score1 !== undefined && match.score2 !== undefined ? 
                     `<p>🏆 Счёт: ${match.score1} - ${match.score2}</p>` : ''}
@@ -257,15 +271,13 @@ async function updateMatchScore(matchId, team1, team2) {
             });
             
             if (response.ok) {
+                alert('✅ Счёт обновлён!');
                 loadMatchesList();
                 loadResultsList();
                 
-                // Вызов функции из script.js для обновления таблицы на клиентской стороне
-                if (typeof loadTable === 'function') {
-                    loadTable();
-                } else {
-                    // Если loadTable недоступна, обновляем страницу
-                    location.reload();
+                // Обновляем таблицу на клиентской стороне
+                if (window.loadTable) {
+                    setTimeout(window.loadTable, 1000);
                 }
             }
         } catch (error) {
@@ -285,15 +297,19 @@ async function loadResultsList() {
         const container = document.getElementById('results-list');
         container.innerHTML = '';
         
+        if (results.length === 0) {
+            container.innerHTML = '<div class="admin-card"><p>📊 Результатов нет</p></div>';
+            return;
+        }
+        
         results.forEach((result, index) => {
             const resultElement = document.createElement('div');
-            resultElement.className = 'admin-card load-in';
-            resultElement.style.animationDelay = `${index * 0.1}s`;
+            resultElement.className = 'admin-card';
             resultElement.innerHTML = `
-                <p><strong>${result.team1} ${result.score1} - ${result.score2} ${result.team2}</strong></p>
+                <p><strong>🏆 ${result.team1} ${result.score1} - ${result.score2} ${result.team2}</strong></p>
                 <p> Тур: ${result.round}</p>
-                <p>📅 ${new Date(result.date).toLocaleDateString()}</p>
-                <button onclick="editResult('${result.id}', '${result.score1}', '${result.score2}')">✏️ Редактировать</button>
+                <p>📅 ${new Date(result.date).toLocaleDateString('ru-RU')}</p>
+                <button onclick="editResult('${result.id}', '${result.score1}', '${result.score2}')" style="margin-right: 10px;">✏️ Редактировать</button>
                 <button onclick="deleteResult('${result.id}')">🗑️ Удалить</button>
             `;
             container.appendChild(resultElement);
@@ -318,40 +334,36 @@ async function editResult(id, currentScore1, currentScore2) {
             });
             
             if (response.ok) {
+                alert('✅ Результат обновлён!');
                 loadResultsList();
                 
-                // Обновляем таблицу
-                if (typeof loadTable === 'function') {
-                    loadTable();
-                } else {
-                    location.reload();
+                if (window.loadTable) {
+                    setTimeout(window.loadTable, 1000);
                 }
             }
         } catch (error) {
-            console.error('Ошибка редактирования результата:', error);
+            console.error('Ошибка редактирования:', error);
         }
     }
 }
 
 async function deleteResult(id) {
-    if (confirm('Вы уверены, что хотите удалить этот результат?')) {
+    if (confirm('⚠️ Вы уверены, что хотите удалить этот результат?')) {
         try {
             const response = await fetch(`${API_BASE_URL}/results/${id}`, {
                 method: 'DELETE'
             });
             
             if (response.ok) {
+                alert('✅ Результат удалён!');
                 loadResultsList();
                 
-                // Обновляем таблицу
-                if (typeof loadTable === 'function') {
-                    loadTable();
-                } else {
-                    location.reload();
+                if (window.loadTable) {
+                    setTimeout(window.loadTable, 1000);
                 }
             }
         } catch (error) {
-            console.error('Ошибка удаления результата:', error);
+            console.error('Ошибка удаления:', error);
         }
     }
 }
@@ -361,7 +373,10 @@ async function addNews() {
     if (!isAuthenticated) return;
     
     const content = document.getElementById('news-content').value;
-    if (!content) return;
+    if (!content.trim()) {
+        alert('❌ Введите текст новости!');
+        return;
+    }
     
     try {
         const response = await fetch(`${API_BASE_URL}/news`, {
@@ -370,15 +385,15 @@ async function addNews() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ 
-                title: 'Новость от администратора',
+                title: '📢 Новость от администратора',
                 content: content,
                 date: new Date().toISOString()
             })
         });
         
         if (response.ok) {
+            alert('✅ Новость добавлена!');
             document.getElementById('news-content').value = '';
-            alert('Новость добавлена');
         }
     } catch (error) {
         console.error('Ошибка добавления новости:', error);
