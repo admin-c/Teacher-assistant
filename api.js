@@ -1,6 +1,6 @@
 // Этот файл объединяет все API вызовы
 const API_CONFIG = {
-    baseUrl: 'https://your-api-url.onrender.com/api', // Замените на ваш API URL
+    baseUrl: 'https://champion-league.onrender.com/api', // Замените на ваш API URL
     headers: {
         'Content-Type': 'application/json'
     }
@@ -98,4 +98,5 @@ class ApiService {
 // Экспорт для использования в других модулях
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = ApiService;
+
 }
