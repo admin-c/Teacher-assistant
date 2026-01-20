@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Лъилибская Лига - Регистрация</title>
+    <title>Лъилибская Лига</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
 </head>
@@ -13,16 +13,81 @@
         <div class="blur-overlay"></div>
     </div>
 
+    <nav class="navbar">
+        <a href="#" class="nav-btn" data-page="home">Главная</a>
+        <a href="#" class="nav-btn" data-page="news">Новости</a>
+        <a href="#" class="nav-btn" data-page="schedule">Расписание</a>
+        <a href="#" class="nav-btn" data-page="results">Результаты</a>
+        <a href="#" class="nav-btn" data-page="table">Таблица</a>
+        <a href="#" class="nav-btn" data-page="teams">Команды</a>
+    </nav>
+
     <div class="content">
-        <h1 class="league-title animate-in">Лъилибская Лига</h1>
-        
-        <form id="registration-form" class="registration-form animate-in-delay">
-            <input type="text" id="team-name" placeholder="Название команды" required>
-            <input type="text" id="owner-name" placeholder="Владелец команды" required>
-            <button type="submit">Записаться на чемпионат</button>
-        </form>
-        
-        <div id="status-message" class="status-message hidden">Вы записаны!</div>
+        <!-- Главная страница -->
+        <section id="home" class="section active">
+            <h1 class="league-title animate-in">Лъилибская Лига</h1>
+            
+            <form id="registration-form" class="registration-form animate-in-delay">
+                <input type="text" id="team-name" placeholder="Название команды" required>
+                <input type="text" id="owner-name" placeholder="Владелец команды" required>
+                <button type="submit">Записаться на чемпионат</button>
+            </form>
+            
+            <div id="status-message" class="status-message hidden">Вы записаны!</div>
+        </section>
+
+        <!-- Новости -->
+        <section id="news" class="section hidden">
+            <h2>Новости</h2>
+            <div id="news-container" class="news-container">
+                <!-- Новости будут загружены -->
+            </div>
+        </section>
+
+        <!-- Расписание матчей -->
+        <section id="schedule" class="section hidden">
+            <h2>Расписание матчей</h2>
+            <div id="schedule-container" class="schedule-container">
+                <!-- Матчи будут загружены -->
+            </div>
+        </section>
+
+        <!-- Результаты тура -->
+        <section id="results" class="section hidden">
+            <h2>Результаты тура</h2>
+            <div id="results-container" class="results-container">
+                <!-- Результаты будут загружены -->
+            </div>
+        </section>
+
+        <!-- Турнирная таблица -->
+        <section id="table" class="section hidden">
+            <h2>Турнирная таблица</h2>
+            <table id="tournament-table" class="tournament-table">
+                <thead>
+                    <tr>
+                        <th>Место</th>
+                        <th>Команда</th>
+                        <th>Игр</th>
+                        <th>Побед</th>
+                        <th>Ничья</th>
+                        <th>Поражений</th>
+                        <th>Очки</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Данные будут загружены -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Команды -->
+        <section id="teams" class="section hidden">
+            <h2>Участники</h2>
+            <div id="teams-container" class="teams-container">
+                <!-- Команды будут загружены -->
+            </div>
+        </section>
     </div>
 
     <script src="script.js"></script>
@@ -39,51 +104,41 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
         
-        // Анимация мячика
         let ballX = Math.random() * canvas.width;
         let ballY = Math.random() * canvas.height;
         let ballSpeedX = (Math.random() - 0.5) * 4;
         let ballSpeedY = (Math.random() - 0.5) * 4;
         
         function drawField() {
-            // Очистка холста
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Рисование поля
             ctx.fillStyle = '#2E8B57';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Линии поля
             ctx.strokeStyle = 'white';
             ctx.lineWidth = 3;
             ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
             
-            // Центральная линия
             ctx.beginPath();
             ctx.moveTo(canvas.width / 2, 20);
             ctx.lineTo(canvas.width / 2, canvas.height - 20);
             ctx.stroke();
             
-            // Центральный круг
             ctx.beginPath();
             ctx.arc(canvas.width / 2, canvas.height / 2, 80, 0, Math.PI * 2);
             ctx.stroke();
             
-            // Ворота
             ctx.strokeRect(20, canvas.height / 2 - 50, 30, 100);
             ctx.strokeRect(canvas.width - 50, canvas.height / 2 - 50, 30, 100);
             
-            // Анимация мячика
             ctx.beginPath();
             ctx.arc(ballX, ballY, 10, 0, Math.PI * 2);
             ctx.fillStyle = '#FFD700';
             ctx.fill();
             
-            // Обновление позиции мячика
             ballX += ballSpeedX;
             ballY += ballSpeedY;
             
-            // Отскок от стен
             if (ballX > canvas.width - 10 || ballX < 10) ballSpeedX *= -1;
             if (ballY > canvas.height - 10 || ballY < 10) ballSpeedY *= -1;
             
