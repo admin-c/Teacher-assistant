@@ -1,5 +1,5 @@
 // Базовый URL API - ЗАМЕНИТЕ НА СВОЙ СЕРВЕР Render.com
-const API_BASE = 'https://champion-league.onrender.com/api';
+const API_BASE = 'https://fcmobile-assistant.onrender.com/api';
 
 // Частицы для фона
 function createParticles() {
@@ -208,4 +208,5 @@ function setupTableSorting() {
 if (window.location.pathname.includes('main.html')) {
     const userTeam = localStorage.getItem('userTeam') || 'Не зарегистрирован';
     document.getElementById('userTeam').textContent = userTeam;
+
 }
