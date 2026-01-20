@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лъилибская Лига - Регистрация</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div class="background-container">
+        <canvas id="football-field-animation"></canvas>
+        <div class="blur-overlay"></div>
+    </div>
+
+    <div class="content">
+        <h1 class="league-title animate-in">Лъилибская Лига</h1>
+        
+        <form id="registration-form" class="registration-form animate-in-delay">
+            <input type="text" id="team-name" placeholder="Название команды" required>
+            <input type="text" id="owner-name" placeholder="Владелец команды" required>
+            <button type="submit">Записаться на чемпионат</button>
+        </form>
+        
+        <div id="status-message" class="status-message hidden">Вы записаны!</div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Анимация футбольного поля
+        const canvas = document.getElementById('football-field-animation');
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
+        // Анимация мячика
+        let ballX = Math.random() * canvas.width;
+        let ballY = Math.random() * canvas.height;
+        let ballSpeedX = (Math.random() - 0.5) * 4;
+        let ballSpeedY = (Math.random() - 0.5) * 4;
+        
+        function drawField() {
+            // Очистка холста
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Рисование поля
+            ctx.fillStyle = '#2E8B57';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Линии поля
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+            
+            // Центральная линия
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, 20);
+            ctx.lineTo(canvas.width / 2, canvas.height - 20);
+            ctx.stroke();
+            
+            // Центральный круг
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, canvas.height / 2, 80, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            // Ворота
+            ctx.strokeRect(20, canvas.height / 2 - 50, 30, 100);
+            ctx.strokeRect(canvas.width - 50, canvas.height / 2 - 50, 30, 100);
+            
+            // Анимация мячика
+            ctx.beginPath();
+            ctx.arc(ballX, ballY, 10, 0, Math.PI * 2);
+            ctx.fillStyle = '#FFD700';
+            ctx.fill();
+            
+            // Обновление позиции мячика
+            ballX += ballSpeedX;
+            ballY += ballSpeedY;
+            
+            // Отскок от стен
+            if (ballX > canvas.width - 10 || ballX < 10) ballSpeedX *= -1;
+            if (ballY > canvas.height - 10 || ballY < 10) ballSpeedY *= -1;
+            
+            requestAnimationFrame(drawField);
+        }
+        
+        drawField();
+    </script>
+</body>
+</html>

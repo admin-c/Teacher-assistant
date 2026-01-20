@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="login-form" class="admin-login">
+        <h2>Вход в админ-панель</h2>
+        <input type="password" id="admin-password" placeholder="Введите пароль">
+        <button onclick="login()">Войти</button>
+    </div>
+
+    <div id="admin-panel" class="hidden">
+        <h2>Админ-панель</h2>
+        
+        <section>
+            <h3>Управление командами</h3>
+            <div id="pending-registrations">
+                <!-- Заявки на регистрацию -->
+            </div>
+        </section>
+        
+        <section>
+            <h3>Добавить новость</h3>
+            <textarea id="news-content" placeholder="Текст новости"></textarea>
+            <button onclick="addNews()">Добавить новость</button>
+        </section>
+        
+        <section>
+            <h3>Управление матчами</h3>
+            <div id="match-controls">
+                <!-- Формы для добавления матчей -->
+            </div>
+        </section>
+        
+        <section>
+            <h3>Обновить таблицу</h3>
+            <button onclick="updateTable()">Обновить турнирную таблицу</button>
+        </section>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
