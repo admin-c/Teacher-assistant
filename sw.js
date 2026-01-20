@@ -2,8 +2,7 @@ const CACHE_NAME = 'liga-cache-v1';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/main.html',
-  '/table.html',
+  '/admin.html',
   '/styles.css',
   '/script.js',
   '/admin.js',
