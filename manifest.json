@@ -1,12 +1,13 @@
 {
-  "name": "Лъибильская Лига",
-  "short_name": "Лъибильская Лига",
+  "name": "Лъилибская Лига - Чемпионат по FC Mobile",
+  "short_name": "Лъилибская Лига",
   "description": "Мобильный футбол FC Mobile - Лига чемпионов",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#121212",
+  "background_color": "#0a0a0a",
   "theme_color": "#00BFFF",
   "orientation": "portrait",
+  "scope": "/",
   "icons": [
     {
       "src": "icon-192.png",
