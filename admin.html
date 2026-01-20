@@ -14,32 +14,69 @@
     </div>
 
     <div id="admin-panel" class="hidden">
-        <h2>Админ-панель</h2>
-        
-        <section>
-            <h3>Управление командами</h3>
-            <div id="pending-registrations">
-                <!-- Заявки на регистрацию -->
+        <div class="admin-header">
+            <h2>Админ-панель</h2>
+            <button onclick="logout()" class="logout-btn">Выйти</button>
+        </div>
+
+        <div class="admin-nav">
+            <button class="admin-tab-btn active" data-tab="registrations">Заявки</button>
+            <button class="admin-tab-btn" data-tab="teams">Команды</button>
+            <button class="admin-tab-btn" data-tab="draw">Жеребьёвка</button>
+            <button class="admin-tab-btn" data-tab="matches">Матчи</button>
+            <button class="admin-tab-btn" data-tab="results">Результаты</button>
+            <button class="admin-tab-btn" data-tab="news">Новости</button>
+        </div>
+
+        <div class="admin-tabs-container">
+            <!-- Заявки -->
+            <div id="tab-registrations" class="admin-tab-content active">
+                <h3>Ожидают подтверждения</h3>
+                <div id="pending-registrations">
+                    <!-- Заявки будут загружены -->
+                </div>
             </div>
-        </section>
-        
-        <section>
-            <h3>Добавить новость</h3>
-            <textarea id="news-content" placeholder="Текст новости"></textarea>
-            <button onclick="addNews()">Добавить новость</button>
-        </section>
-        
-        <section>
-            <h3>Управление матчами</h3>
-            <div id="match-controls">
-                <!-- Формы для добавления матчей -->
+
+            <!-- Команды -->
+            <div id="tab-teams" class="admin-tab-content hidden">
+                <h3>Управление командами</h3>
+                <div id="teams-list">
+                    <!-- Команды будут загружены -->
+                </div>
             </div>
-        </section>
-        
-        <section>
-            <h3>Обновить таблицу</h3>
-            <button onclick="updateTable()">Обновить турнирную таблицу</button>
-        </section>
+
+            <!-- Жеребьёвка -->
+            <div id="tab-draw" class="admin-tab-content hidden">
+                <h3>Жеребьёвка</h3>
+                <button onclick="performDraw()">Сгенерировать пары</button>
+                <div id="draw-results">
+                    <!-- Результаты жеребьёвки -->
+                </div>
+            </div>
+
+            <!-- Матчи -->
+            <div id="tab-matches" class="admin-tab-content hidden">
+                <h3>Матчи</h3>
+                <div id="matches-list">
+                    <!-- Матчи будут загружены -->
+                </div>
+            </div>
+
+            <!-- Результаты -->
+            <div id="tab-results" class="admin-tab-content hidden">
+                <h3>Результаты тура</h3>
+                <div id="results-list">
+                    <!-- Результаты будут загружены -->
+                </div>
+            </div>
+
+            <!-- Новости -->
+            <div id="tab-news" class="admin-tab-content hidden">
+                <h3>Добавить новость</h3>
+                <textarea id="news-content" placeholder="Текст новости"></textarea>
+                <button onclick="addNews()">Добавить новость</button>
+            </div>
+        </div>
     </div>
 
     <script src="admin.js"></script>
