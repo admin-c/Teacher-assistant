@@ -1,5 +1,5 @@
 // API конфигурация
-const API_BASE_URL = 'https://champion-league.onrender.com/api'; // Замените на ваш API URL
+const API_BASE_URL = 'https://champion-league.onrender.com/api';
 let isAuthenticated = false;
 
 function login() {
@@ -8,13 +8,62 @@ function login() {
         isAuthenticated = true;
         document.getElementById('login-form').classList.add('hidden');
         document.getElementById('admin-panel').classList.remove('hidden');
+        
+        // Загружаем начальные данные
         loadPendingRegistrations();
-        loadMatchControls();
+        loadTeamsList();
+        loadMatchesList();
+        loadResultsList();
     } else {
         alert('Неверный пароль');
     }
 }
 
+function logout() {
+    isAuthenticated = false;
+    document.getElementById('admin-panel').classList.add('hidden');
+    document.getElementById('login-form').classList.remove('hidden');
+    document.getElementById('admin-password').value = '';
+}
+
+// Переключение вкладок
+document.querySelectorAll('.admin-tab-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        // Убираем активный класс у всех кнопок
+        document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Добавляем активный класс к нажатой кнопке
+        button.classList.add('active');
+        
+        // Показываем соответствующую вкладку
+        const tabId = button.getAttribute('data-tab');
+        document.querySelectorAll('.admin-tab-content').forEach(content => {
+            content.classList.remove('active');
+            content.classList.add('hidden');
+        });
+        
+        const targetTab = document.getElementById(`tab-${tabId}`);
+        if (targetTab) {
+            targetTab.classList.remove('hidden');
+            targetTab.classList.add('active');
+            
+            // Загружаем данные для вкладки
+            if (tabId === 'registrations') {
+                loadPendingRegistrations();
+            } else if (tabId === 'teams') {
+                loadTeamsList();
+            } else if (tabId === 'matches') {
+                loadMatchesList();
+            } else if (tabId === 'results') {
+                loadResultsList();
+            }
+        }
+    });
+});
+
+// Заявки
 async function loadPendingRegistrations() {
     if (!isAuthenticated) return;
     
@@ -50,6 +99,7 @@ async function approveRegistration(id) {
         
         if (response.ok) {
             loadPendingRegistrations();
+            loadTeamsList(); // Обновляем список команд
         }
     } catch (error) {
         console.error('Ошибка подтверждения:', error);
@@ -70,6 +120,222 @@ async function rejectRegistration(id) {
     }
 }
 
+// Команды
+async function loadTeamsList() {
+    if (!isAuthenticated) return;
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/teams`);
+        const teams = await response.json();
+        
+        const container = document.getElementById('teams-list');
+        container.innerHTML = '';
+        
+        teams.forEach((team, index) => {
+            const teamElement = document.createElement('div');
+            teamElement.className = 'team-item load-in';
+            teamElement.style.animationDelay = `${index * 0.1}s`;
+            teamElement.innerHTML = `
+                <p><strong>Команда:</strong> ${team.name}</p>
+                <p><strong>Владелец:</strong> ${team.owner}</p>
+                <button onclick="editTeam('${team.id}', '${team.name}', '${team.owner}')">Редактировать</button>
+                <button onclick="deleteTeam('${team.id}')">Удалить</button>
+            `;
+            container.appendChild(teamElement);
+        });
+    } catch (error) {
+        console.error('Ошибка загрузки команд:', error);
+    }
+}
+
+async function editTeam(id, name, owner) {
+    const newName = prompt('Введите новое название команды:', name);
+    const newOwner = prompt('Введите нового владельца:', owner);
+    
+    if (newName && newOwner) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/teams/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: newName, owner: newOwner })
+            });
+            
+            if (response.ok) {
+                loadTeamsList();
+            }
+        } catch (error) {
+            console.error('Ошибка редактирования команды:', error);
+        }
+    }
+}
+
+async function deleteTeam(id) {
+    if (confirm('Вы уверены, что хотите удалить эту команду?')) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/teams/${id}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                loadTeamsList();
+            }
+        } catch (error) {
+            console.error('Ошибка удаления команды:', error);
+        }
+    }
+}
+
+// Жеребьёвка
+async function performDraw() {
+    if (!isAuthenticated) return;
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/perform-draw`, {
+            method: 'POST'
+        });
+        
+        const result = await response.json();
+        
+        const container = document.getElementById('draw-results');
+        container.innerHTML = '<h4>Сгенерированные пары:</h4>';
+        
+        result.pairs.forEach(pair => {
+            const pairElement = document.createElement('div');
+            pairElement.className = 'pair-item';
+            pairElement.innerHTML = `<p>${pair.team1} vs ${pair.team2}</p>`;
+            container.appendChild(pairElement);
+        });
+    } catch (error) {
+        console.error('Ошибка жеребьёвки:', error);
+    }
+}
+
+// Матчи
+async function loadMatchesList() {
+    if (!isAuthenticated) return;
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/matches`);
+        const matches = await response.json();
+        
+        const container = document.getElementById('matches-list');
+        container.innerHTML = '';
+        
+        matches.forEach((match, index) => {
+            const matchElement = document.createElement('div');
+            matchElement.className = 'match-item-admin load-in';
+            matchElement.style.animationDelay = `${index * 0.1}s`;
+            matchElement.innerHTML = `
+                <p><strong>${match.team1} vs ${match.team2}</strong></p>
+                <p>Дата: ${new Date(match.date).toLocaleString()}</p>
+                <p>Статус: ${match.status}</p>
+                <button onclick="updateMatchScore('${match.id}', '${match.team1}', '${match.team2}')">Обновить счёт</button>
+            `;
+            container.appendChild(matchElement);
+        });
+    } catch (error) {
+        console.error('Ошибка загрузки матчей:', error);
+    }
+}
+
+async function updateMatchScore(matchId, team1, team2) {
+    const score1 = prompt(`Введите счёт для ${team1}:`, '0');
+    const score2 = prompt(`Введите счёт для ${team2}:`, '0');
+    
+    if (score1 !== null && score2 !== null) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/matches/${matchId}/score`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ score1: parseInt(score1), score2: parseInt(score2) })
+            });
+            
+            if (response.ok) {
+                loadMatchesList();
+                loadResultsList();
+                loadTable(); // Обновляем таблицу
+            }
+        } catch (error) {
+            console.error('Ошибка обновления счёта:', error);
+        }
+    }
+}
+
+// Результаты
+async function loadResultsList() {
+    if (!isAuthenticated) return;
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/results`);
+        const results = await response.json();
+        
+        const container = document.getElementById('results-list');
+        container.innerHTML = '';
+        
+        results.forEach((result, index) => {
+            const resultElement = document.createElement('div');
+            resultElement.className = 'result-item-admin load-in';
+            resultElement.style.animationDelay = `${index * 0.1}s`;
+            resultElement.innerHTML = `
+                <p><strong>${result.team1} ${result.score1} - ${result.score2} ${result.team2}</strong></p>
+                <p>Тур: ${result.round}</p>
+                <p>Дата: ${new Date(result.date).toLocaleDateString()}</p>
+                <button onclick="editResult('${result.id}', '${result.score1}', '${result.score2}')">Редактировать</button>
+                <button onclick="deleteResult('${result.id}')">Удалить</button>
+            `;
+            container.appendChild(resultElement);
+        });
+    } catch (error) {
+        console.error('Ошибка загрузки результатов:', error);
+    }
+}
+
+async function editResult(id, currentScore1, currentScore2) {
+    const newScore1 = prompt('Введите новый счёт первой команды:', currentScore1);
+    const newScore2 = prompt('Введите новый счёт второй команды:', currentScore2);
+    
+    if (newScore1 !== null && newScore2 !== null) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/results/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ score1: parseInt(newScore1), score2: parseInt(newScore2) })
+            });
+            
+            if (response.ok) {
+                loadResultsList();
+                loadTable();
+            }
+        } catch (error) {
+            console.error('Ошибка редактирования результата:', error);
+        }
+    }
+}
+
+async function deleteResult(id) {
+    if (confirm('Вы уверены, что хотите удалить этот результат?')) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/results/${id}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                loadResultsList();
+                loadTable();
+            }
+        } catch (error) {
+            console.error('Ошибка удаления результата:', error);
+        }
+    }
+}
+
+// Новости
 async function addNews() {
     if (!isAuthenticated) return;
     
@@ -96,67 +362,4 @@ async function addNews() {
     } catch (error) {
         console.error('Ошибка добавления новости:', error);
     }
-}
-
-async function loadMatchControls() {
-    if (!isAuthenticated) return;
-    
-    const container = document.getElementById('match-controls');
-    container.innerHTML = `
-        <form id="match-form">
-            <input type="text" id="team1" placeholder="Команда 1" required>
-            <input type="text" id="team2" placeholder="Команда 2" required>
-            <input type="datetime-local" id="match-date" required>
-            <button type="submit">Добавить матч</button>
-        </form>
-    `;
-    
-    document.getElementById('match-form').addEventListener('submit', addMatch);
-}
-
-async function addMatch(e) {
-    e.preventDefault();
-    
-    const team1 = document.getElementById('team1').value;
-    const team2 = document.getElementById('team2').value;
-    const date = document.getElementById('match-date').value;
-    
-    try {
-        const response = await fetch(`${API_BASE_URL}/matches`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                team1,
-                team2,
-                date,
-                status: 'Запланирован'
-            })
-        });
-        
-        if (response.ok) {
-            document.getElementById('match-form').reset();
-            alert('Матч добавлен');
-        }
-    } catch (error) {
-        console.error('Ошибка добавления матча:', error);
-    }
-}
-
-async function updateTable() {
-    if (!isAuthenticated) return;
-    
-    try {
-        const response = await fetch(`${API_BASE_URL}/update-table`, {
-            method: 'POST'
-        });
-        
-        if (response.ok) {
-            alert('Таблица обновлена');
-        }
-    } catch (error) {
-        console.error('Ошибка обновления таблицы:', error);
-    }
-
 }
