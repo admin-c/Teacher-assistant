@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Лъилибская Лига</title>
+    <title>Лъилибская Лига - Чемпионат по FC Mobile</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="background-container">
@@ -15,19 +16,19 @@
     </div>
 
     <nav class="navbar">
-        <a href="#" class="nav-btn active" data-page="home">Главная</a>
-        <a href="#" class="nav-btn" data-page="news">Новости</a>
-        <a href="#" class="nav-btn" data-page="schedule">Матчи</a>
-        <a href="#" class="nav-btn" data-page="results">Результаты</a>
-        <a href="#" class="nav-btn" data-page="table">Таблица</a>
-        <a href="#" class="nav-btn" data-page="teams">Команды</a>
+        <a href="#" class="nav-btn active" data-page="home">🏠 Главная</a>
+        <a href="#" class="nav-btn" data-page="news">📰 Новости</a>
+        <a href="#" class="nav-btn" data-page="schedule">⚽ Матчи</a>
+        <a href="#" class="nav-btn" data-page="results">📊 Результаты</a>
+        <a href="#" class="nav-btn" data-page="table">📈 Таблица</a>
+        <a href="#" class="nav-btn" data-page="teams">👥 Команды</a>
     </nav>
 
     <div class="content">
         <!-- Главная страница -->
         <section id="home" class="section active">
             <div class="hero-section">
-                <h1 class="league-title animate-in">Лъилибская Лига</h1>
+                <h1 class="league-title">Лъилибская Лига</h1>
                 <p class="subtitle">Чемпионат по мобильному футболу FC Mobile</p>
             </div>
             
@@ -36,15 +37,15 @@
                 <form id="registration-form">
                     <input type="text" id="team-name" placeholder="Название команды" required>
                     <input type="text" id="owner-name" placeholder="Владелец команды" required>
-                    <button type="submit">Записаться</button>
+                    <button type="submit">Записаться в лигу</button>
                 </form>
-                <div id="status-message" class="status-message hidden">Вы записаны!</div>
+                <div id="status-message" class="status-message hidden">✅ Вы успешно записаны!</div>
             </div>
         </section>
 
         <!-- Новости -->
         <section id="news" class="section">
-            <h2>Новости</h2>
+            <h2>📰 Последние новости</h2>
             <div id="news-container" class="cards-grid">
                 <!-- Новости будут загружены -->
             </div>
@@ -52,7 +53,7 @@
 
         <!-- Матчи -->
         <section id="schedule" class="section">
-            <h2>Предстоящие матчи</h2>
+            <h2>⚽ Предстоящие матчи</h2>
             <div id="schedule-container" class="cards-grid">
                 <!-- Матчи будут загружены -->
             </div>
@@ -60,7 +61,7 @@
 
         <!-- Результаты -->
         <section id="results" class="section">
-            <h2>Результаты тура</h2>
+            <h2>📊 Результаты тура</h2>
             <div id="results-container" class="cards-grid">
                 <!-- Результаты будут загружены -->
             </div>
@@ -68,12 +69,12 @@
 
         <!-- Таблица -->
         <section id="table" class="section">
-            <h2>Турнирная таблица</h2>
+            <h2>📈 Турнирная таблица</h2>
             <div class="table-container">
                 <table id="tournament-table" class="tournament-table">
                     <thead>
                         <tr>
-                            <th>Место</th>
+                            <th>🏆</th>
                             <th>Команда</th>
                             <th>И</th>
                             <th>Поб</th>
@@ -91,7 +92,7 @@
 
         <!-- Команды -->
         <section id="teams" class="section">
-            <h2>Участники</h2>
+            <h2>👥 Участники лиги</h2>
             <div id="teams-container" class="cards-grid">
                 <!-- Команды будут загружены -->
             </div>
@@ -99,7 +100,9 @@
     </div>
 
     <!-- Кнопка "Установить" -->
-    <button id="install-button" class="install-btn hidden">Установить на телефон</button>
+    <button id="install-button" class="install-btn hidden">
+        <span>📱</span> Установить на телефон
+    </button>
 
     <script src="script.js"></script>
     <script>
@@ -115,43 +118,61 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
         
-        let ballX = Math.random() * canvas.width;
-        let ballY = Math.random() * canvas.height;
-        let ballSpeedX = (Math.random() - 0.5) * 4;
-        let ballSpeedY = (Math.random() - 0.5) * 4;
+        // Переменные для анимации мяча
+        let balls = [];
+        for (let i = 0; i < 5; i++) {
+            balls.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                dx: (Math.random() - 0.5) * 2,
+                dy: (Math.random() - 0.5) * 2,
+                radius: 8 + Math.random() * 6
+            });
+        }
         
         function drawField() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            ctx.fillStyle = '#2E8B57';
+            // Градиентный фон
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, '#2E8B57');
+            gradient.addColorStop(1, '#3CB371');
+            ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
+            // Линии поля
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
             ctx.lineWidth = 2;
-            ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+            ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
             
             ctx.beginPath();
-            ctx.moveTo(canvas.width / 2, 20);
-            ctx.lineTo(canvas.width / 2, canvas.height - 20);
+            ctx.moveTo(canvas.width / 2, 30);
+            ctx.lineTo(canvas.width / 2, canvas.height - 30);
             ctx.stroke();
             
             ctx.beginPath();
-            ctx.arc(canvas.width / 2, canvas.height / 2, 80, 0, Math.PI * 2);
+            ctx.arc(canvas.width / 2, canvas.height / 2, 100, 0, Math.PI * 2);
             ctx.stroke();
             
-            ctx.strokeRect(20, canvas.height / 2 - 50, 30, 100);
-            ctx.strokeRect(canvas.width - 50, canvas.height / 2 - 50, 30, 100);
+            // Ворота
+            ctx.strokeRect(30, canvas.height / 2 - 70, 40, 140);
+            ctx.strokeRect(canvas.width - 70, canvas.height / 2 - 70, 40, 140);
             
-            ctx.beginPath();
-            ctx.arc(ballX, ballY, 10, 0, Math.PI * 2);
-            ctx.fillStyle = '#FFD700';
-            ctx.fill();
-            
-            ballX += ballSpeedX;
-            ballY += ballSpeedY;
-            
-            if (ballX > canvas.width - 10 || ballX < 10) ballSpeedX *= -1;
-            if (ballY > canvas.height - 10 || ballY < 10) ballSpeedY *= -1;
+            // Анимация мячей
+            balls.forEach(ball => {
+                ctx.beginPath();
+                ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#FFD700';
+                ctx.fill();
+                
+                // Обновление позиции
+                ball.x += ball.dx;
+                ball.y += ball.dy;
+                
+                // Отскок от стен
+                if (ball.x < ball.radius || ball.x > canvas.width - ball.radius) ball.dx *= -1;
+                if (ball.y < ball.radius || ball.y > canvas.height - ball.radius) ball.dy *= -1;
+            });
             
             requestAnimationFrame(drawField);
         }
